@@ -1,0 +1,45 @@
+<assembly>
+    <id>launcher</id>
+    <formats>
+        <format>tar.gz</format>
+    </formats>
+
+    <includeBaseDirectory>true</includeBaseDirectory>
+    <baseDirectory>auditquery</baseDirectory>
+
+    <dependencySets>
+
+        <!-- Audit Query Service -->
+        <dependencySet>
+            <useProjectArtifact>true</useProjectArtifact>
+            <useProjectAttachments>true</useProjectAttachments>
+            <useStrictFiltering>true</useStrictFiltering>
+            <includes>
+                <include>${project.groupId}:${project.artifactId}:jar:launcher-classes:${project.version}</include>
+            </includes>
+            <outputDirectory>lib</outputDirectory>
+        </dependencySet>
+
+        <!--  runtime dependencies -->
+        <dependencySet>
+            <useProjectArtifact>false</useProjectArtifact>
+            <scope>runtime</scope>
+            <excludes>
+                <exclude>org.commonjava.auditquery*</exclude>
+                <exclude>org.commonjava*</exclude>
+            </excludes>
+            <outputDirectory>lib/thirdparty</outputDirectory>
+        </dependencySet>
+    </dependencySets>
+
+    <fileSets>
+        <fileSet>
+            <directory>${project.basedir}/src/main/conf</directory>
+            <outputDirectory>etc/auditquery</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>${project.basedir}/src/main/scripts</directory>
+            <outputDirectory>bin</outputDirectory>
+        </fileSet>
+    </fileSets>
+</assembly>

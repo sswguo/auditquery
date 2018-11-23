@@ -1,0 +1,25 @@
+<assembly>
+    <id>launcher-classes</id>
+    <formats>
+        <format>jar</format>
+    </formats>
+
+    <includeBaseDirectory>false</includeBaseDirectory>
+
+    <dependencySets>
+        <dependencySet>
+            <useProjectArtifact>true</useProjectArtifact>
+            <useTransitiveDependencies>true</useTransitiveDependencies>
+            <useStrictFiltering>true</useStrictFiltering>
+            <scope>runtime</scope>
+            <includes>
+                <include>org.commonjava*</include>
+            </includes>
+            <excludes>
+
+            </excludes>
+            <outputDirectory>/</outputDirectory>
+            <unpack>true</unpack>
+        </dependencySet>
+    </dependencySets>
+</assembly>
