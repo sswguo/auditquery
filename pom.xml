@@ -30,6 +30,7 @@
   <modules>
     <module>rest</module>
     <module>deployments</module>
+    <module>model-java</module>
   </modules>
 
   <dependencyManagement>
