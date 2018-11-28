@@ -58,4 +58,10 @@ public class Options extends BootOptions implements UndertowBootOptions
     {
 
     }
+
+    @Override
+    protected String getDefaultConfigFile()
+    {
+        return "/etc/auditquery/main.conf";
+    }
 }
