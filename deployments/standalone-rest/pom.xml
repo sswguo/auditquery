@@ -21,7 +21,20 @@
         </dependency>
         <dependency>
             <groupId>org.commonjava.propulsor</groupId>
+            <artifactId>propulsor-resteasy</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.commonjava.propulsor</groupId>
             <artifactId>propulsor-undertow</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.commonjava.propulsor.config</groupId>
+            <artifactId>propulsor-configuration-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.commonjava.propulsor.config</groupId>
+            <artifactId>propulsor-configuration-dotconf</artifactId>
         </dependency>
     </dependencies>
 

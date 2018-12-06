@@ -22,4 +22,12 @@
             <unpack>true</unpack>
         </dependencySet>
     </dependencySets>
+
+    <fileSets>
+        <fileSet>
+            <directory>src/main/resources/META-INF</directory>
+            <outputDirectory>META-INF</outputDirectory>
+        </fileSet>
+    </fileSets>
 </assembly>
+
