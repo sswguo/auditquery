@@ -9,6 +9,17 @@
 
     <dependencySets>
 
+        <!-- UI -->
+        <dependencySet>
+            <useProjectArtifact>true</useProjectArtifact>
+            <useStrictFiltering>true</useStrictFiltering>
+            <includes>
+                <include>org.commonjava.auditquery:auditquery-ui-layover</include>
+            </includes>
+            <outputDirectory>var/lib/auditquery/ui</outputDirectory>
+            <unpack>true</unpack>
+        </dependencySet>
+
         <!-- Audit Query Service -->
         <dependencySet>
             <useProjectArtifact>true</useProjectArtifact>

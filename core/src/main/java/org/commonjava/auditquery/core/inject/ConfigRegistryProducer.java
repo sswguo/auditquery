@@ -22,6 +22,7 @@ import org.commonjava.propulsor.config.ConfigurationRegistry;
 import org.commonjava.propulsor.config.DefaultConfigurationListener;
 import org.commonjava.propulsor.config.DefaultConfigurationRegistry;
 import org.commonjava.propulsor.config.section.BeanSectionListener;
+import org.commonjava.propulsor.deploy.undertow.ui.UIConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,7 +34,11 @@ import javax.inject.Inject;
 public class ConfigRegistryProducer
 {
 
-    @Inject AuditQueryConfig auditQueryConfig;
+    @Inject
+    AuditQueryConfig auditQueryConfig;
+
+    @Inject
+    UIConfiguration config;
 
     @Produces
     public ConfigurationRegistry getConfigurationRegistry() throws ConfigurationException
@@ -41,8 +46,12 @@ public class ConfigRegistryProducer
         Logger logger = LoggerFactory.getLogger( getClass() );
         logger.info( "AuditQuery service configuration registry producer." );
 
-        return new DefaultConfigurationRegistry(
-                        new DefaultConfigurationListener(new BeanSectionListener( auditQueryConfig )));
+        DefaultConfigurationListener configListener =
+                        new DefaultConfigurationListener( new BeanSectionListener( auditQueryConfig ) );
+
+        configListener.with( config );
+
+        return new DefaultConfigurationRegistry( configListener );
     }
 
 }

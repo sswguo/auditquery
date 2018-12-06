@@ -34,6 +34,7 @@
     <module>deployments</module>
     <module>model-java</module>
     <module>core</module>
+    <module>uis</module>
   </modules>
 
   <dependencyManagement>
@@ -84,6 +85,11 @@
       <dependency>
         <groupId>org.commonjava.auditquery</groupId>
         <artifactId>auditquery-core</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.commonjava.auditquery</groupId>
+        <artifactId>auditquery-ui-layover</artifactId>
         <version>${project.version}</version>
       </dependency>
 
