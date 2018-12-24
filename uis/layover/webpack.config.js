@@ -15,6 +15,7 @@ module.exports =
                 "exclude": /node_modules/,
                 "loader": "babel-loader",
                 "options": {
+                  "plugins": ["@babel/plugin-proposal-class-properties"],
                   "presets": ["@babel/preset-react"]
                 }
             },

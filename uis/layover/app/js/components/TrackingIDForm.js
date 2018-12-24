@@ -7,23 +7,20 @@ class TrackingIDForm extends React.Component {
   constructor(props) {
     super(props);
     this.state = {value: ''};
-
-    this.handleChange = this.handleChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  handleChange(event) {
+  handleChange = (event) => {
     this.setState({value: event.target.value});
   }
 
-  handleSubmit(event) {
+  handleSubmit = (event) => {
     event.preventDefault();
-    this.props.history.replace("/browse/history/content/tracking/" + this.state.value + "/");
+    this.props.history.replace(`/browse/history/content/tracking/${this.state.value}/`);
   }
 
   render() {
     return (
-    <div>
+    <React.Fragment>
       <form onSubmit={this.handleSubmit}>
         <label>
           Tracking ID:
@@ -31,7 +28,7 @@ class TrackingIDForm extends React.Component {
         </label>
         <input type="submit" value="Submit" />
       </form>
-    </div>
+    </React.Fragment>
     );
   }
 }

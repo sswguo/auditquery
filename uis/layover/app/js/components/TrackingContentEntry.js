@@ -1,5 +1,4 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import ReactTable from "react-table";
 
 import "react-table/react-table.css";
@@ -12,14 +11,11 @@ export class TrackingContentEntry extends React.Component{
          entries: [],
          isLoaded: false
        };
-       this.fetchData = this.fetchData.bind(this);
     }
 
     fetchData(){
-       fetch("/api/rest/history/content/tracking/" +
-            this.props.trackingID +
-               "/entries?type=" +
-                    this.props.type)
+       fetch(`/api/rest/history/content/tracking/
+            ${this.props.trackingID}/entries?type=${this.props.type}`)
            .then(function(response) {
               return response.json();
            })
@@ -68,13 +64,13 @@ export class TrackingContentEntry extends React.Component{
          return <div>Loading...</div>;
       } else {
          return (
-            <div>
+            <React.Fragment>
                <h4>Tracking Content Entry</h4>
                <ReactTable
                    data={entries}
                    columns={columns}
                />
-            </div>
+            </React.Fragment>
          );
       }
     };
