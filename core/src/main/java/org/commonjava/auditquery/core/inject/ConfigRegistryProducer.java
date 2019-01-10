@@ -17,6 +17,7 @@
 package org.commonjava.auditquery.core.inject;
 
 import org.commonjava.auditquery.core.conf.AuditQueryConfig;
+import org.commonjava.auditquery.core.conf.ESearchConfiguration;
 import org.commonjava.propulsor.config.ConfigurationException;
 import org.commonjava.propulsor.config.ConfigurationRegistry;
 import org.commonjava.propulsor.config.DefaultConfigurationListener;
@@ -40,6 +41,9 @@ public class ConfigRegistryProducer
     @Inject
     UIConfiguration config;
 
+    @Inject
+    ESearchConfiguration eSeachConfig;
+
     @Produces
     public ConfigurationRegistry getConfigurationRegistry() throws ConfigurationException
     {
@@ -50,6 +54,7 @@ public class ConfigRegistryProducer
                         new DefaultConfigurationListener( new BeanSectionListener( auditQueryConfig ) );
 
         configListener.with( config );
+        configListener.with( eSeachConfig );
 
         return new DefaultConfigurationRegistry( configListener );
     }

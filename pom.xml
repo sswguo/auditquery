@@ -28,6 +28,7 @@
     <weftVersion>1.4.1</weftVersion>
     <slf4jVersion>1.7.25</slf4jVersion>
     <jackson-version>2.9.7</jackson-version>
+    <elasticsearchVersion>6.1.4</elasticsearchVersion>
   </properties>
 
   <modules>
@@ -137,7 +138,17 @@
         <version>${slf4jVersion}</version>
       </dependency>
 
-
+      <!-- elasticsearch client-->
+      <dependency>
+        <groupId>org.elasticsearch</groupId>
+        <artifactId>elasticsearch</artifactId>
+        <version>${elasticsearchVersion}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.elasticsearch.client</groupId>
+        <artifactId>transport</artifactId>
+        <version>${elasticsearchVersion}</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 </project>
