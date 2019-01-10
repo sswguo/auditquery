@@ -27,7 +27,7 @@
     <undertowVersion>1.4.22.Final</undertowVersion>
     <weftVersion>1.4.1</weftVersion>
     <slf4jVersion>1.7.25</slf4jVersion>
-    <jackson-version>2.9.7</jackson-version>
+    <jackson-version>2.9.8</jackson-version>
     <elasticsearchVersion>6.1.4</elasticsearchVersion>
   </properties>
 
