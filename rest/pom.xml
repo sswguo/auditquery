@@ -23,5 +23,33 @@
             <groupId>org.commonjava.propulsor</groupId>
             <artifactId>propulsor-undertow</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>org.commonjava.auditquery</groupId>
+            <artifactId>auditquery-model-java</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.commonjava.auditquery</groupId>
+            <artifactId>auditquery-core</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.jaxrs</groupId>
+            <artifactId>jackson-jaxrs-json-provider</artifactId>
+        </dependency>
+
     </dependencies>
 </project>

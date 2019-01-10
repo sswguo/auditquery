@@ -31,6 +31,10 @@
             <groupId>org.commonjava.auditquery</groupId>
             <artifactId>auditquery-core</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.commonjava.auditquery</groupId>
+            <artifactId>auditquery-ui-layover</artifactId>
+        </dependency>
     </dependencies>
 </project>
 
