@@ -15,22 +15,9 @@ public class ESearchConfiguration
 
     }
 
-    private String clusterName;
-
     private String host;
 
     private Integer port;
-
-    public String getClusterName()
-    {
-        return clusterName;
-    }
-
-    @ConfigName( "cluster.name" )
-    public void setClusterName( String clusterName )
-    {
-        this.clusterName = clusterName;
-    }
 
     public String getHost()
     {

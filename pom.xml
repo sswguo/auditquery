@@ -29,6 +29,7 @@
     <slf4jVersion>1.7.25</slf4jVersion>
     <jackson-version>2.9.8</jackson-version>
     <elasticsearchVersion>6.1.4</elasticsearchVersion>
+    <httpcomponentsVersion>4.4.5</httpcomponentsVersion>
   </properties>
 
   <modules>
@@ -140,13 +141,23 @@
 
       <!-- elasticsearch client-->
       <dependency>
+        <groupId>org.apache.httpcomponents</groupId>
+        <artifactId>httpcore</artifactId>
+        <version>${httpcomponentsVersion}</version>
+      </dependency>
+      <dependency>
         <groupId>org.elasticsearch</groupId>
         <artifactId>elasticsearch</artifactId>
         <version>${elasticsearchVersion}</version>
       </dependency>
       <dependency>
         <groupId>org.elasticsearch.client</groupId>
-        <artifactId>transport</artifactId>
+        <artifactId>elasticsearch-rest-client</artifactId>
+        <version>${elasticsearchVersion}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.elasticsearch.client</groupId>
+        <artifactId>elasticsearch-rest-high-level-client</artifactId>
         <version>${elasticsearchVersion}</version>
       </dependency>
     </dependencies>
