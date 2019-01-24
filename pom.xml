@@ -28,6 +28,8 @@
     <weftVersion>1.4.1</weftVersion>
     <slf4jVersion>1.7.25</slf4jVersion>
     <jackson-version>2.9.7</jackson-version>
+    <infinispanVersion>8.2.4.Final</infinispanVersion>
+    <hibernateVersion>5.8.1.Final</hibernateVersion>
   </properties>
 
   <modules>
@@ -36,6 +38,7 @@
     <module>model-java</module>
     <module>core</module>
     <module>uis</module>
+    <module>cache</module>
   </modules>
 
   <dependencyManagement>
@@ -72,6 +75,11 @@
         <artifactId>propulsor-configuration-dotconf</artifactId>
         <version>${propulsorVersion}</version>
       </dependency>
+      <dependency>
+        <groupId>org.commonjava.propulsor.content-audit</groupId>
+        <artifactId>propulsor-content-audit-api</artifactId>
+        <version>${propulsorVersion}</version>
+      </dependency>
 
       <dependency>
         <groupId>org.commonjava.cdi.util</groupId>
@@ -92,6 +100,11 @@
       <dependency>
         <groupId>org.commonjava.auditquery</groupId>
         <artifactId>auditquery-core</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.commonjava.auditquery</groupId>
+        <artifactId>auditquery-cache</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -137,6 +150,36 @@
         <version>${slf4jVersion}</version>
       </dependency>
 
+      <dependency>
+        <groupId>org.infinispan</groupId>
+        <artifactId>infinispan-cdi-embedded</artifactId>
+        <version>${infinispanVersion}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.infinispan</groupId>
+        <artifactId>infinispan-core</artifactId>
+        <version>${infinispanVersion}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.infinispan</groupId>
+        <artifactId>infinispan-query</artifactId>
+        <version>${infinispanVersion}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.infinispan</groupId>
+        <artifactId>infinispan-query-dsl</artifactId>
+        <version>${infinispanVersion}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.hibernate</groupId>
+        <artifactId>hibernate-search-orm</artifactId>
+        <version>${hibernateVersion}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.hibernate</groupId>
+        <artifactId>hibernate-search-engine</artifactId>
+        <version>${hibernateVersion}</version>
+      </dependency>
 
     </dependencies>
   </dependencyManagement>

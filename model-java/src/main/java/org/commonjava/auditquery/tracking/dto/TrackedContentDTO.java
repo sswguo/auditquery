@@ -1,9 +1,14 @@
 package org.commonjava.auditquery.tracking.dto;
 
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Indexed;
+
 import java.util.Set;
 
+@Indexed
 public class TrackedContentDTO
 {
+    @Field
     private String trackingID;
 
     private Set<TrackedContentEntryDTO> uploads;

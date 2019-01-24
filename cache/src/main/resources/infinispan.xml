@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<infinispan
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="urn:infinispan:config:8.2 http://www.infinispan.org/schemas/infinispan-config-8.2.xsd"
+        xmlns="urn:infinispan:config:8.2">
+
+    <cache-container default-cache="default">
+        <!-- template configurations -->
+        <local-cache-configuration name="local-template">
+        </local-cache-configuration>
+        
+        <local-cache name="tracking_summary_cache" configuration="local-template">
+            <eviction strategy="LRU" size="20000" type="COUNT" />
+            <indexing index="LOCAL">
+                <property name="default.directory_provider">ram</property>
+            </indexing>
+        </local-cache>
+
+        <local-cache name="tracked_content_dto_cache" configuration="local-template">
+            <eviction strategy="LRU" size="20000" type="COUNT" />
+            <indexing index="LOCAL">
+                <property name="default.directory_provider">ram</property>
+            </indexing>
+        </local-cache>
+
+        <local-cache name="file_event_cache" configuration="local-template">
+            <eviction strategy="LRU" size="40000" type="COUNT" />
+            <indexing index="LOCAL">
+                <property name="default.directory_provider">ram</property>
+                <property name="hibernate.search.model_mapping">org.commonjava.auditquery.cache.AuditQueryCacheProducer</property>
+            </indexing>
+        </local-cache>
+    </cache-container>
+
+</infinispan>

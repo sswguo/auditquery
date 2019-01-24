@@ -1,10 +1,15 @@
 package org.commonjava.auditquery.tracking;
 
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Indexed;
+
 import java.util.Date;
 import java.util.Set;
 
+@Indexed
 public class TrackingSummary
 {
+    @Field
     private String trackingID;
 
     /* checksums */
