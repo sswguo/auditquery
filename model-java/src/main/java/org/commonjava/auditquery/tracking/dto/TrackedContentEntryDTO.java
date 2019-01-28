@@ -1,6 +1,6 @@
 package org.commonjava.auditquery.tracking.dto;
 
-public class TrackedContentEntryDTO
+public class TrackedContentEntryDTO implements Comparable<TrackedContentEntryDTO>
 {
     /* current artifact repository key info */
     private String storeKey;
@@ -72,4 +72,20 @@ public class TrackedContentEntryDTO
     public Long getSize() { return size; }
 
     public void setSize( Long size ) { this.size = size; }
+
+    @Override
+    public int compareTo( TrackedContentEntryDTO other )
+    {
+        int comp = storeKey.compareTo( other.getStoreKey() );
+        if ( comp == 0 )
+        {
+            comp = accessChannel.compareTo( other.getAccessChannel() );
+        }
+        if ( comp == 0 )
+        {
+            comp = path.compareTo( other.getPath() );
+        }
+
+        return comp;
+    }
 }
