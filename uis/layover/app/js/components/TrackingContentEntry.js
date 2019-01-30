@@ -6,16 +6,21 @@ import "react-table/react-table.css";
 export class TrackingContentEntry extends React.Component{
     constructor(props){
        super(props);
+       console.log(this.props.location.search);
+               let queryParams = new URLSearchParams(this.props.location.search);
        this.state = {
-       error: null,
+         error: null,
          entries: [],
-         isLoaded: false
+         isLoaded: false,
+         pageSkip: queryParams.get("p"),
+         pageCount: queryParams.get("c")
        };
     }
 
     fetchData(){
+       this.parseQuery();
        fetch(`/api/rest/history/content/tracking/
-            ${this.props.trackingID}/entries?type=${this.props.type}`)
+            ${this.props.trackingID}/entries?type=${this.props.type}&skip=${this.state.pageSkip}&count=${this.state.pageCount}`)
            .then(function(response) {
               return response.json();
            })
@@ -35,6 +40,14 @@ export class TrackingContentEntry extends React.Component{
            )
     }
 
+    parseQuery(){
+        let queryParams = new URLSearchParams(this.props.location.search);
+        this.setState({
+            pageSkip: queryParams.get("p"),
+            pageCount: queryParams.get("c")
+        });
+    }
+
     componentDidMount(){
         this.fetchData();
     }
@@ -52,11 +65,20 @@ export class TrackingContentEntry extends React.Component{
           Header: 'Store Key',
           accessor: 'storeKey'
       }, {
+         Header: 'Checksum',
+         accessor: 'sha256'
+      },{
           Header: 'Access Channel',
           accessor: 'accessChannel'
       }, {
          Header: 'Path',
          accessor: 'path'
+      }, {
+         Header: 'Origin URL',
+         accessor: 'originUrl'
+      }, {
+         Header: 'Local URL',
+         accessor: 'localUrl'
       }];
 
 
@@ -69,6 +91,10 @@ export class TrackingContentEntry extends React.Component{
                <ReactTable
                    data={entries}
                    columns={columns}
+                   onPageSizeChange={(pageSize, pageIndex) => {
+                        console.log(pageIndex + "|" + pageSize)
+                        // TODO update location or just refresh the table
+                   }}
                />
             </React.Fragment>
          );

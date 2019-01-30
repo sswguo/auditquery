@@ -1,10 +1,11 @@
 package org.commonjava.auditquery.rest.resources;
 
-import org.commonjava.auditquery.core.conf.AuditQueryConfig;
-import org.commonjava.auditquery.tracking.TrackingSummary;
+import org.commonjava.auditquery.ctl.ContentTrackingController;
 import org.commonjava.auditquery.tracking.dto.TrackedContentEntryDTO;
 import org.commonjava.auditquery.tracking.dto.TrackingSummaryDTO;
 import org.commonjava.propulsor.deploy.resteasy.RestResources;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -14,12 +15,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 
 import static org.commonjava.propulsor.deploy.undertow.util.StandardApplicationContent.application_json;
 
@@ -31,15 +27,23 @@ public class ContentTrackingResource
                 implements RestResources
 {
 
+    @Inject
+    ContentTrackingController trackingController;
+
     @GET
     @Path( "/history/content/tracking/{tracking-id}/summary" )
     public TrackingSummaryDTO getTrackingSummary( @PathParam( "tracking-id" ) String trackingID )
     {
-        //TODO
-        TrackingSummaryDTO trackingSummaryDTO = new TrackingSummaryDTO( trackingID, 2, 10 );
-
-        trackingSummaryDTO.setStartTime( new Date(  ) );
-        trackingSummaryDTO.setEndTime( new Date(  ) );
+        TrackingSummaryDTO trackingSummaryDTO = null;
+        try
+        {
+            trackingSummaryDTO = trackingController.getTrackingSummaryByID( trackingID );
+        }
+        catch ( Exception e )
+        {
+            Logger logger = LoggerFactory.getLogger( getClass() );
+            logger.error( "Get tracking summary error, {}", trackingID, e );
+        }
 
         return trackingSummaryDTO;
     }
@@ -51,24 +55,15 @@ public class ContentTrackingResource
                                                            @QueryParam( "skip" ) int skip,
                                                            @QueryParam( "count" ) int count )
     {
-        //TODO
-        Collection<TrackedContentEntryDTO> trackedContentEntryDTOS = new ArrayList<TrackedContentEntryDTO>();
-
-        if ( "upload".equals( type ) )
+        Collection<TrackedContentEntryDTO> trackedContentEntryDTOS = null;
+        try
         {
-            for (int i =0; i<20; i++)
-            {
-                TrackedContentEntryDTO up = new TrackedContentEntryDTO( "hosted:foo" + i, "MAVEN", "/path/to/foo.pom" );
-                trackedContentEntryDTOS.add( up );
-            }
+            trackedContentEntryDTOS = trackingController.queryContentEntries( trackingID.trim(), type, skip, count );
         }
-        else if ( "download".equals( type ) )
+        catch ( Exception e )
         {
-            for (int i =0; i<20; i++)
-            {
-                TrackedContentEntryDTO down = new TrackedContentEntryDTO( "remote:foo" + i, "MAVEN", "/path/to/foo1.pom" );
-                trackedContentEntryDTOS.add( down );
-            }
+            Logger logger = LoggerFactory.getLogger( getClass() );
+            logger.error( "Query content entries error, {}", trackingID, e );
         }
 
         return trackedContentEntryDTOS;

@@ -52,8 +52,8 @@ export class TrackingSummary extends React.Component{
               <React.Fragment>
                  <h4>Tracking Summary</h4>
                  Tracking ID:   { summary.trackingID } <br />
-                 <Link to={{  pathname:"upload", search: "?p=1" }}>Uploads</Link>  { summary.uploadCount } <br />
-                 <Link to={{  pathname:"download", search: "?p=1" }}>Downloads</Link>  { summary.downloadCount }
+                 <Link to={{  pathname:"upload", search: "?p=0&c=20" }}>Uploads</Link>  { summary.uploadCount } <br />
+                 <Link to={{  pathname:"download", search: "?p=0&c=20" }}>Downloads</Link>  { summary.downloadCount }
               </React.Fragment>
             );
       }

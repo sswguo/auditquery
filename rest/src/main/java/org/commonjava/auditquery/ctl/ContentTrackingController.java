@@ -21,15 +21,13 @@ import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @ApplicationScoped
@@ -51,6 +49,66 @@ public class ContentTrackingController
 
     Logger logger = LoggerFactory.getLogger( getClass() );
 
+    public TrackingSummaryDTO getTrackingSummaryByID( String trackingID ) throws Exception
+    {
+
+        TrackingSummaryDTO trackingSummaryDTO;
+
+        TrackingSummary trackingSummary = getTrackingSummary( trackingID );
+
+        if ( trackingSummary == null )
+        {
+            throw new Exception( "No tracking summary exists, trackingId: " + trackingID );
+        }
+
+        trackingSummaryDTO =
+                        new TrackingSummaryDTO( trackingSummary.getTrackingID(), trackingSummary.getUploads().size(),
+                                                trackingSummary.getDownloads().size() );
+
+        return trackingSummaryDTO;
+
+    }
+
+    public Collection<TrackedContentEntryDTO> queryContentEntries( String trackingID, String type, int skip, int count )
+                    throws Exception
+    {
+
+        Collection<TrackedContentEntryDTO> trackedContentEntryDTOS;
+
+        Collection<FileEvent> fileEvents = queryPaginationFileEvents( trackingID, type, skip, count );
+
+        if ( "download".equals( type ) )
+        {
+            TrackingSummary trackingSummary = getTrackingSummary( trackingID );
+
+            Map<String, List<FileEvent>> storageEventsMap = queryStorageEventsFunction.apply( trackingSummary );
+
+            trackedContentEntryDTOS = fileEvents.parallelStream()
+                                                .map( fileEvent -> eventToBasicEntryFunction.apply( fileEvent ) )
+                                                .map( entryDTO -> {
+                                                    List<FileEvent> storageEventList =
+                                                                    storageEventsMap.get( entryDTO.getSha256() );
+
+                                                    FileEvent first = minEventFunction.apply( storageEventList );
+                                                    FileEvent last = maxEventFunction.apply( storageEventList );
+
+                                                    entryDTO.setOriginUrl( first.getTargetLocation() );
+                                                    entryDTO.setLocalUrl( last.getTargetLocation() );
+                                                    return entryDTO;
+                                                } )
+                                                .collect( Collectors.toSet() );
+        }
+        else
+        {
+            trackedContentEntryDTOS = fileEvents.parallelStream()
+                                                .map( fileEvent -> eventToBasicEntryFunction.apply( fileEvent ) )
+                                                .collect( Collectors.toSet() );
+        }
+
+        return trackedContentEntryDTOS;
+
+    }
+
     public void getTrackedContent( String trackingID, String call )
     {
 
@@ -67,51 +125,40 @@ public class ContentTrackingController
                     throw new Exception( "No tracking summary existing. TrackingID: " + trackingID );
                 }
 
-                logger.info( "Retrieve the corresponding storage events which contains the checksums." );
-                List<FileEvent> fileStorageEvents =
-                                queryFileEventsByChecksums( trackingSummary.getDownloads(), "STORAGE" );
-
-                logger.info( "Grouping the storage events according to the checksum." );
-                Map<String, List<FileEvent>> storageEventsMap = fileStorageEvents.stream()
-                                                                                 .collect( Collectors.groupingBy(
-                                                                                                 event -> event.getChecksum() ) );
+                Map<String, List<FileEvent>> storageEventsMap = queryStorageEventsFunction.apply( trackingSummary );
 
                 logger.info( "Query all the file access events of the tracking id: {}", trackingID );
                 List<FileEvent> fileAccessEventList = queryFileEvents( trackingID, "ACCESS" );
 
-                Set<TrackedContentEntryDTO> uploads = new TreeSet<>();
-                Set<TrackedContentEntryDTO> downloads = new TreeSet<>();
-                fileAccessEventList.forEach( accessEvent -> {
-                    String checksum =  accessEvent.getChecksum();
-                    TrackedContentEntryDTO entryDTO = new TrackedContentEntryDTO();
+                Set<TrackedContentEntryDTO> downloads = fileAccessEventList.stream()
+                                                                           .map( accessEvent -> eventToBasicEntryFunction
+                                                                                           .apply(
+                                                                                           accessEvent ) )
+                                                                           .map( entryDTO -> {
+                                                                               String checksum = entryDTO.getSha256();
 
-                    List<FileEvent> storageEventList = storageEventsMap.get( checksum );
-                    FileEvent first = storageEventList.stream()
-                                                      .min( Comparator.comparing( i -> i.getTimestamp() ) )
-                                                      .get();
-                    FileEvent last = storageEventList.stream()
-                                                     .max( Comparator.comparing( i -> i.getTimestamp() ) )
-                                                     .get();
+                                                                               List<FileEvent> storageEventList =
+                                                                                               storageEventsMap.get(
+                                                                                                               checksum );
+                                                                               FileEvent first = minEventFunction.apply(
+                                                                                               storageEventList );
+                                                                               FileEvent last = maxEventFunction.apply(
+                                                                                               storageEventList );
 
-                    entryDTO.setOriginUrl( first.getTargetLocation() );
-                    entryDTO.setLocalUrl( last.getTargetLocation() );
-                    entryDTO.setPath( accessEvent.getTargetPath() );
-                    entryDTO.setStoreKey( accessEvent.getExtra().get( "storeKey" ) );
-                    entryDTO.setAccessChannel( accessEvent.getExtra().get( "accessChannel" ) );
-                    entryDTO.setSha256( checksum );
-                    downloads.add( entryDTO );
-                } );
+                                                                               entryDTO.setOriginUrl(
+                                                                                               first.getTargetLocation() );
+                                                                               entryDTO.setLocalUrl(
+                                                                                               last.getTargetLocation() );
+                                                                               return entryDTO;
+                                                                           } )
+                                                                           .collect( Collectors.toSet() );
 
-                fileStorageEvents.forEach( storageEvent -> {
-                    TrackedContentEntryDTO entryDTO = new TrackedContentEntryDTO();
-                    entryDTO.setLocalUrl( storageEvent.getTargetLocation() );
-                    entryDTO.setStoreKey( storageEvent.getExtra().get( "storeKey" ) );
-                    entryDTO.setAccessChannel( storageEvent.getExtra().get( "accessChannel" ) );
-                    entryDTO.setPath( storageEvent.getTargetPath() );
-                    entryDTO.setOriginUrl( "" );
-                    entryDTO.setSha256( storageEvent.getChecksum() );
-                    uploads.add( entryDTO );
-                } );
+                List<FileEvent> fileStorageEvents = new ArrayList<>();
+                storageEventsMap.values().stream().forEach( subList -> fileStorageEvents.addAll( subList ) );
+                Set<TrackedContentEntryDTO> uploads = fileStorageEvents.stream()
+                                                                       .map( storageEvent -> eventToBasicEntryFunction.apply(
+                                                                                       storageEvent ) )
+                                                                       .collect( Collectors.toSet() );
 
                 TrackedContentDTO trackedContentDTO = new TrackedContentDTO( trackingID, uploads, downloads );
 
@@ -130,7 +177,7 @@ public class ContentTrackingController
 
     private TrackingSummary getTrackingSummary( String trackingID ) throws Exception
     {
-        TrackingSummary trackingSummary = null;
+        TrackingSummary trackingSummary;
 
         QueryFactory queryFactory = Search.getQueryFactory( trackingSummaryCache );
         org.infinispan.query.dsl.QueryBuilder qb =
@@ -141,7 +188,6 @@ public class ContentTrackingController
         if ( trackingSummaryList.isEmpty() )
         {
             logger.info( "Missing summary with trackingId {} in the cache, try to construct it.", trackingID );
-
             trackingSummary = constructTrackingSummary( trackingID );
             if ( trackingSummary != null )
             {
@@ -163,6 +209,7 @@ public class ContentTrackingController
 
         if ( fileEventList.isEmpty() )
         {
+            logger.info( "No corresponding file events with the trackingId: {}", trackingID );
             return null;
         }
 
@@ -206,17 +253,73 @@ public class ContentTrackingController
         return qb.build().list();
     }
 
-    private List<FileEvent> queryFileEventsByChecksums( Set<String> downloads, String eventType )
+    private Collection<FileEvent> queryPaginationFileEvents( String trackingID, String type, int skip, int count )
+                    throws Exception
     {
+        String eventType;
+        switch ( type )
+        {
+            case "upload":
+                eventType = "STORAGE";
+                break;
+            case "download":
+                eventType = "ACCESS";
+                break;
+            default:
+                throw new IllegalArgumentException( "Invalid event type:" + type );
+        }
+
+        QueryFactory queryFactory = Search.getQueryFactory( fileEventCache );
+        org.infinispan.query.dsl.QueryBuilder qb = queryFactory.from( FileEvent.class )
+                                                               .orderBy( "timestamp", SortOrder.DESC )
+                                                               .startOffset( skip * count )
+                                                               .maxResults( count )
+                                                               .having( "sessionId" )
+                                                               .eq( trackingID )
+                                                               .and()
+                                                               .having( "eventType" )
+                                                               .eq( eventType )
+                                                               .toBuilder();
+        List<FileEvent> fileEventList = qb.build().list();
+        return fileEventList;
+    }
+
+    Function<TrackingSummary, Map<String, List<FileEvent>>> queryStorageEventsFunction = trackingSummary -> {
+
+        logger.info( "Retrieve the corresponding storage events which contains the checksums." );
         QueryFactory queryFactory = Search.getQueryFactory( fileEventCache );
         org.infinispan.query.dsl.QueryBuilder qb = queryFactory.from( FileEvent.class )
                                                                .having( "eventType" )
-                                                               .eq( eventType )
+                                                               .eq( "STORAGE" )
                                                                .and()
                                                                .having( "checksum" )
-                                                               .in( downloads )
+                                                               .in( trackingSummary.getDownloads() )
                                                                .toBuilder();
-        return qb.build().list();
-    }
+
+        List<FileEvent> fileStorageEvents = qb.build().list();
+
+        logger.info( "Grouping the storage events according to the checksum." );
+        Map<String, List<FileEvent>> storageEventsMap =
+                        fileStorageEvents.stream().collect( Collectors.groupingBy( event -> event.getChecksum() ) );
+        return storageEventsMap;
+    };
+
+    Function<FileEvent, TrackedContentEntryDTO> eventToBasicEntryFunction = fileEvent -> {
+        TrackedContentEntryDTO entryDTO = new TrackedContentEntryDTO();
+        entryDTO.setPath( fileEvent.getTargetPath() );
+        entryDTO.setSha256( fileEvent.getChecksum() );
+        entryDTO.setStoreKey( fileEvent.getExtra().get( "storeKey" ) );
+        entryDTO.setPath( fileEvent.getExtra().get( "path" ) );
+        entryDTO.setLocalUrl( fileEvent.getTargetLocation() );
+        entryDTO.setOriginUrl( "" );
+        entryDTO.setAccessChannel( fileEvent.getExtra().get( "packageType" ) );
+        return entryDTO;
+    };
+
+    Function<List<FileEvent>, FileEvent> minEventFunction =
+                    list -> list.stream().min( Comparator.comparing( i -> i.getTimestamp() ) ).get();
+
+    Function<List<FileEvent>, FileEvent> maxEventFunction =
+                    list -> list.stream().max( Comparator.comparing( i -> i.getTimestamp() ) ).get();
 
 }
