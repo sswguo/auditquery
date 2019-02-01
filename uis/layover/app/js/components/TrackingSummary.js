@@ -45,18 +45,27 @@ export class TrackingSummary extends React.Component{
 
     render(){
       const { isLoaded, summary } = this.state;
+
       if (!isLoaded) {
         return <div>Loading...</div>;
       } else {
-        return (
-              <React.Fragment>
-                 <h4>Tracking Summary</h4>
-                 Tracking ID:   { summary.trackingID } <br />
-                 <Link to={{  pathname:"upload", search: "?p=0&c=20" }}>Uploads</Link>  { summary.uploadCount } <br />
-                 <Link to={{  pathname:"download", search: "?p=0&c=20" }}>Downloads</Link>  { summary.downloadCount }
-              </React.Fragment>
-            );
-      }
+        if ( summary.error ) {
+          return (
+             <React.Fragment>
+                    { summary.error }
+             </React.Fragment>
+          );
+        } else {
+          return (
+            <React.Fragment>
+               <h4>Tracking Summary</h4>
+               Tracking ID:   { summary.trackingID } <br />
+               <Link to={{  pathname:"upload", search: "?p=0&c=20" }}>Uploads</Link>  { summary.uploadCount } <br />
+               <Link to={{  pathname:"download", search: "?p=0&c=20" }}>Downloads</Link>  { summary.downloadCount }
+            </React.Fragment>
+          );
+        }
+     }
 
     };
 }

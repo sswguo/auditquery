@@ -1,11 +1,10 @@
 package org.commonjava.auditquery.rest.resources;
 
 import org.commonjava.auditquery.ctl.ContentTrackingController;
+import org.commonjava.auditquery.rest.exception.AuditQueryWebException;
 import org.commonjava.auditquery.tracking.dto.TrackedContentEntryDTO;
 import org.commonjava.auditquery.tracking.dto.TrackingSummaryDTO;
 import org.commonjava.propulsor.deploy.resteasy.RestResources;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -33,16 +32,16 @@ public class ContentTrackingResource
     @GET
     @Path( "/history/content/tracking/{tracking-id}/summary" )
     public TrackingSummaryDTO getTrackingSummary( @PathParam( "tracking-id" ) String trackingID )
+                    throws AuditQueryWebException
     {
-        TrackingSummaryDTO trackingSummaryDTO = null;
+        TrackingSummaryDTO trackingSummaryDTO;
         try
         {
             trackingSummaryDTO = trackingController.getTrackingSummaryByID( trackingID );
         }
         catch ( Exception e )
         {
-            Logger logger = LoggerFactory.getLogger( getClass() );
-            logger.error( "Get tracking summary error, {}", trackingID, e );
+            throw new AuditQueryWebException( e );
         }
 
         return trackingSummaryDTO;
@@ -54,16 +53,16 @@ public class ContentTrackingResource
                                                            @QueryParam( "type" ) String type,
                                                            @QueryParam( "skip" ) int skip,
                                                            @QueryParam( "count" ) int count )
+                    throws AuditQueryWebException
     {
-        Collection<TrackedContentEntryDTO> trackedContentEntryDTOS = null;
+        Collection<TrackedContentEntryDTO> trackedContentEntryDTOS;
         try
         {
             trackedContentEntryDTOS = trackingController.queryContentEntries( trackingID.trim(), type, skip, count );
         }
         catch ( Exception e )
         {
-            Logger logger = LoggerFactory.getLogger( getClass() );
-            logger.error( "Query content entries error, {}", trackingID, e );
+            throw new AuditQueryWebException( e );
         }
 
         return trackedContentEntryDTOS;
