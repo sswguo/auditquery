@@ -2,6 +2,8 @@ package org.commonjava.auditquery.ctl;
 
 import org.commonjava.auditquery.cache.FileEventsCache;
 import org.commonjava.auditquery.cache.TrackingSummaryCache;
+import org.commonjava.auditquery.olap.handler.CallbackRequest;
+import org.commonjava.auditquery.olap.handler.CallbackResult;
 import org.commonjava.auditquery.tracking.TrackingSummary;
 import org.commonjava.auditquery.tracking.dto.TrackedContentDTO;
 import org.commonjava.auditquery.tracking.dto.TrackedContentEntryDTO;
@@ -27,6 +29,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -46,6 +49,9 @@ public class ContentTrackingController
     @Inject
     @FileEventsCache
     Cache<String, FileEvent> fileEventCache;
+
+    @Inject
+    Consumer<CallbackResult> callbackReqConsumer;
 
     Logger logger = LoggerFactory.getLogger( getClass() );
 
@@ -109,9 +115,10 @@ public class ContentTrackingController
 
     }
 
-    public void getTrackedContent( String trackingID, String call )
+    public void getTrackedContent( CallbackRequest request )
     {
 
+        String trackingID = request.getTrackingID();
         logger.info( "Thread off the OLAP process, trackingID {}", trackingID );
 
         Callable<String> callableTask = () -> {
@@ -162,7 +169,7 @@ public class ContentTrackingController
 
                 TrackedContentDTO trackedContentDTO = new TrackedContentDTO( trackingID, uploads, downloads );
 
-                // TODO invoke callback
+                callbackReqConsumer.accept( new CallbackResult( request, trackedContentDTO ) );
             }
             catch ( Exception e )
             {
