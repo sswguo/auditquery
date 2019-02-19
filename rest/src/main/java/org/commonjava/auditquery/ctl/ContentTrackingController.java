@@ -9,6 +9,7 @@ import org.commonjava.auditquery.tracking.dto.TrackedContentDTO;
 import org.commonjava.auditquery.tracking.dto.TrackedContentEntryDTO;
 import org.commonjava.auditquery.tracking.dto.TrackingSummaryDTO;
 import org.commonjava.cdi.util.weft.ExecutorConfig;
+import org.commonjava.cdi.util.weft.WeftExecutorService;
 import org.commonjava.cdi.util.weft.WeftManaged;
 import org.commonjava.propulsor.content.audit.model.FileEvent;
 import org.infinispan.Cache;
@@ -28,7 +29,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -39,8 +39,8 @@ public class ContentTrackingController
 
     @Inject
     @WeftManaged
-    @ExecutorConfig( named = "OLAP-executor", threads = 3 )
-    ExecutorService executor;
+    @ExecutorConfig( named = "OLAP-Service", threads = 8, maxLoadFactor = 40)
+    WeftExecutorService olapService;
 
     @Inject
     @TrackingSummaryCache
@@ -178,7 +178,7 @@ public class ContentTrackingController
             return "OLAP process done.";
         };
 
-        executor.submit( callableTask );
+        olapService.submit( callableTask );
 
     }
 

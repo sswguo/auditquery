@@ -2,6 +2,7 @@ package org.commonjava.auditquery.olap.handler;
 
 import java.io.Serializable;
 import java.util.UUID;
+import java.util.function.Function;
 
 public class CallbackJob implements Serializable
 {
@@ -10,10 +11,15 @@ public class CallbackJob implements Serializable
 
     private CallbackResult result;
 
-    public CallbackJob( CallbackResult result )
+    private int retryCount = 0;
+
+    private Function<CallbackJob, Boolean> exec;
+
+    public CallbackJob( CallbackResult result, Function exec )
     {
         this.jobId = UUID.randomUUID();
         this.result = result;
+        this.exec = exec;
     }
 
     public UUID getJobId()
@@ -34,6 +40,26 @@ public class CallbackJob implements Serializable
     public void setResult( CallbackResult result )
     {
         this.result = result;
+    }
+
+    public Boolean start()
+    {
+        return exec.apply( this );
+    }
+
+    public int getRetryCount()
+    {
+        return retryCount;
+    }
+
+    public void setRetryCount( int retryCount )
+    {
+        this.retryCount = retryCount;
+    }
+
+    public void increaseRetryCount()
+    {
+        retryCount++;
     }
 
     @Override

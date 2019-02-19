@@ -16,6 +16,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import java.util.Map;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 @ApplicationScoped
 public class ContentTrackingOLAPCallback
@@ -29,6 +30,9 @@ public class ContentTrackingOLAPCallback
     @Inject
     ObjectMapper objectMapper;
 
+    @Inject
+    RetriableProcessor retriableProcessor;
+
     public ContentTrackingOLAPCallback()
     {
 
@@ -41,18 +45,16 @@ public class ContentTrackingOLAPCallback
         httpFactory = new HttpFactory( authenticator );
     }
 
-
     @Override
     public void accept( CallbackResult callbackResult )
     {
-        callback( new CallbackJob( callbackResult ) );
+        retriableProcessor.commit( new CallbackJob( callbackResult, callback ) );
     }
 
-    public void callback( CallbackJob job )
-    {
+    Function<CallbackJob, Boolean> callback = ( CallbackJob job ) -> {
         CallbackResult result = job.getResult();
-        Boolean isCallbackOK = false;
-        try( CloseableHttpClient client = httpFactory.createClient( ) )
+        Boolean isCallbackOK;
+        try (CloseableHttpClient client = httpFactory.createClient())
         {
 
             CallbackTarget target = result.getRequest().getCallbackTarget();
@@ -78,16 +80,18 @@ public class ContentTrackingOLAPCallback
             post.setEntity( new StringEntity( objectMapper.writeValueAsString( result.getResultObj() ) ) );
             CloseableHttpResponse response = client.execute( post );
 
-            isCallbackOK = isCallbackOK ( response.getStatusLine().getStatusCode() );
+            isCallbackOK = isCallbackOK( response.getStatusLine().getStatusCode() );
 
-            //TODO fix to handle the job failure
         }
         catch ( Exception e )
         {
             Logger logger = LoggerFactory.getLogger( getClass() );
             logger.error( "Callback request error.", e );
+
+            isCallbackOK = false;
         }
-    }
+        return isCallbackOK;
+    };
 
     private boolean isCallbackOK( int statusCode )
     {
