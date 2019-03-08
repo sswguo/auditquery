@@ -41,7 +41,7 @@ public class AuditQueryConfigurator
     public void load( BootOptions options ) throws ConfiguratorException
     {
         String config = options.getConfig();
-        File configFile = new File( System.getProperty( options.getHomeSystemProperty() ), config );
+        File configFile = new File( config );
 
         try (InputStream stream = ConfigFileUtils.readFileWithIncludes( configFile ))
         {

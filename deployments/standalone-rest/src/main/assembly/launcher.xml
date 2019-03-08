@@ -51,6 +51,10 @@
         <fileSet>
             <directory>${project.basedir}/src/main/scripts</directory>
             <outputDirectory>bin</outputDirectory>
+            <includes>
+                <include>*.sh</include>
+            </includes>
+            <fileMode>0755</fileMode>
         </fileSet>
     </fileSets>
 </assembly>
