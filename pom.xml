@@ -28,7 +28,7 @@
     <weftVersion>1.10</weftVersion>
     <slf4jVersion>1.7.25</slf4jVersion>
     <jackson-version>2.9.8</jackson-version>
-    <infinispanVersion>8.2.4.Final</infinispanVersion>
+    <infinispanVersion>9.4.7.Final</infinispanVersion>
     <hibernateVersion>5.8.1.Final</hibernateVersion>
     <httpcoreVersion>4.4.6</httpcoreVersion>
     <httpclientVersion>4.5.3</httpclientVersion>

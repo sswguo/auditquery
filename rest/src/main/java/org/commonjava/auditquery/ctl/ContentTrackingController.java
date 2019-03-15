@@ -12,6 +12,7 @@ import org.commonjava.cdi.util.weft.ExecutorConfig;
 import org.commonjava.cdi.util.weft.WeftExecutorService;
 import org.commonjava.cdi.util.weft.WeftManaged;
 import org.commonjava.propulsor.content.audit.model.FileEvent;
+import org.commonjava.propulsor.content.audit.model.FileEventType;
 import org.infinispan.Cache;
 import org.infinispan.query.Search;
 import org.infinispan.query.dsl.QueryFactory;
@@ -32,6 +33,8 @@ import java.util.concurrent.Callable;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import static org.commonjava.propulsor.content.audit.model.FileEventType.*;
 
 @ApplicationScoped
 public class ContentTrackingController
@@ -226,10 +229,10 @@ public class ContentTrackingController
         fileEventList.forEach( fileEvent -> {
             switch ( fileEvent.getEventType() )
             {
-                case "STORAGE":
+                case STORAGE:
                     uploads.add( fileEvent.getChecksum() );
                     break;
-                case "ACCESS":
+                case ACCESS:
                     downloads.add( fileEvent.getChecksum() );
                     break;
                 default:

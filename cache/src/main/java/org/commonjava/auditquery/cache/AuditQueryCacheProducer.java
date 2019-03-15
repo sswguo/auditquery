@@ -3,6 +3,7 @@ package org.commonjava.auditquery.cache;
 import org.commonjava.auditquery.tracking.TrackingSummary;
 import org.commonjava.auditquery.tracking.dto.TrackedContentDTO;
 import org.commonjava.propulsor.content.audit.model.FileEvent;
+import org.hibernate.search.annotations.Analyze;
 import org.hibernate.search.annotations.Factory;
 import org.hibernate.search.annotations.Resolution;
 import org.hibernate.search.cfg.SearchMapping;
@@ -34,6 +35,7 @@ public class AuditQueryCacheProducer
                     .indexed()
                     .property( "sessionId", ElementType.METHOD )
                     .field()
+                    .analyze(Analyze.NO)
                     .property( "eventType", ElementType.METHOD )
                     .field()
                     .property( "checksum", ElementType.METHOD )
