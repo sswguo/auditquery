@@ -3,10 +3,11 @@ package org.commonjava.auditquery.tracking.dto;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Indexed;
 
+import java.io.Serializable;
 import java.util.Set;
 
 @Indexed
-public class TrackedContentDTO
+public class TrackedContentDTO implements Serializable
 {
     @Field
     private String trackingID;

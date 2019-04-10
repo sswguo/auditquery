@@ -2,9 +2,10 @@ package org.commonjava.auditquery.tracking.dto;
 
 import org.commonjava.auditquery.tracking.TrackingSummary;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class TrackingSummaryDTO
+public class TrackingSummaryDTO implements Serializable
 {
     private String trackingID;
 

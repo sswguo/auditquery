@@ -3,11 +3,12 @@ package org.commonjava.auditquery.tracking;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Indexed;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
 
 @Indexed
-public class TrackingSummary
+public class TrackingSummary implements Serializable
 {
     @Field
     private String trackingID;

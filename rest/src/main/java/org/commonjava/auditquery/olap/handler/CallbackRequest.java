@@ -3,18 +3,18 @@ package org.commonjava.auditquery.olap.handler;
 public class CallbackRequest
 {
 
-    private String TrackingID;
+    private String trackingID;
 
     private CallbackTarget callbackTarget;
 
     public String getTrackingID()
     {
-        return TrackingID;
+        return trackingID;
     }
 
     public void setTrackingID( String trackingID )
     {
-        TrackingID = trackingID;
+        this.trackingID = trackingID;
     }
 
     public CallbackTarget getCallbackTarget()
@@ -30,6 +30,6 @@ public class CallbackRequest
     @Override
     public String toString()
     {
-        return "CallbackRequest{" + "TrackingID='" + TrackingID + '\'' + ", callbackTarget=" + callbackTarget + '}';
+        return "CallbackRequest{" + "trackingID='" + trackingID + '\'' + ", callbackTarget=" + callbackTarget + '}';
     }
 }

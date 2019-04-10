@@ -12,7 +12,6 @@ import org.commonjava.cdi.util.weft.ExecutorConfig;
 import org.commonjava.cdi.util.weft.WeftExecutorService;
 import org.commonjava.cdi.util.weft.WeftManaged;
 import org.commonjava.propulsor.content.audit.model.FileEvent;
-import org.commonjava.propulsor.content.audit.model.FileEventType;
 import org.infinispan.Cache;
 import org.infinispan.query.Search;
 import org.infinispan.query.dsl.QueryFactory;
@@ -33,8 +32,6 @@ import java.util.concurrent.Callable;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-
-import static org.commonjava.propulsor.content.audit.model.FileEventType.*;
 
 @ApplicationScoped
 public class ContentTrackingController
@@ -92,7 +89,7 @@ public class ContentTrackingController
 
             Map<String, List<FileEvent>> storageEventsMap = queryStorageEventsFunction.apply( trackingSummary );
 
-            trackedContentEntryDTOS = fileEvents.parallelStream()
+            trackedContentEntryDTOS = fileEvents.stream()
                                                 .map( fileEvent -> eventToBasicEntryFunction.apply( fileEvent ) )
                                                 .map( entryDTO -> {
                                                     List<FileEvent> storageEventList =
@@ -109,7 +106,7 @@ public class ContentTrackingController
         }
         else
         {
-            trackedContentEntryDTOS = fileEvents.parallelStream()
+            trackedContentEntryDTOS = fileEvents.stream()
                                                 .map( fileEvent -> eventToBasicEntryFunction.apply( fileEvent ) )
                                                 .collect( Collectors.toSet() );
         }
@@ -187,15 +184,9 @@ public class ContentTrackingController
 
     private TrackingSummary getTrackingSummary( String trackingID ) throws Exception
     {
-        TrackingSummary trackingSummary;
+        TrackingSummary trackingSummary = trackingSummaryCache.get( trackingID );
 
-        QueryFactory queryFactory = Search.getQueryFactory( trackingSummaryCache );
-        org.infinispan.query.dsl.QueryBuilder qb =
-                        queryFactory.from( TrackingSummary.class ).having( "trackingID" ).eq( trackingID ).toBuilder();
-
-        List<TrackingSummary> trackingSummaryList = qb.build().list();
-
-        if ( trackingSummaryList.isEmpty() )
+        if ( trackingSummary == null )
         {
             logger.info( "Missing summary with trackingId {} in the cache, try to construct it.", trackingID );
             trackingSummary = constructTrackingSummary( trackingID );
@@ -204,10 +195,6 @@ public class ContentTrackingController
                 logger.info( "Put tracking summary into the cache, trackingId {}.", trackingID );
                 trackingSummaryCache.putIfAbsent( trackingID, trackingSummary );
             }
-        }
-        else
-        {
-            trackingSummary = trackingSummaryList.get( 0 );
         }
 
         return trackingSummary;
@@ -321,6 +308,7 @@ public class ContentTrackingController
         entryDTO.setStoreKey( fileEvent.getExtra().get( "storeKey" ) );
         entryDTO.setPath( fileEvent.getExtra().get( "path" ) );
         entryDTO.setLocalUrl( fileEvent.getTargetLocation() );
+        //TODO Need to calculate it later
         entryDTO.setOriginUrl( "" );
         entryDTO.setAccessChannel( fileEvent.getExtra().get( "packageType" ) );
         return entryDTO;

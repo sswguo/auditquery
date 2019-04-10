@@ -1,6 +1,8 @@
 package org.commonjava.auditquery.tracking.dto;
 
-public class TrackedContentEntryDTO implements Comparable<TrackedContentEntryDTO>
+import java.io.Serializable;
+
+public class TrackedContentEntryDTO implements Comparable<TrackedContentEntryDTO>, Serializable
 {
     /* current artifact repository key info */
     private String storeKey;
