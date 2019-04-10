@@ -3,7 +3,9 @@ package org.commonjava.auditquery.olap.handler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.commonjava.util.jhttpc.HttpFactory;
@@ -17,6 +19,9 @@ import javax.inject.Inject;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
+
+import static org.commonjava.auditquery.olap.handler.CallbackTarget.CallbackMethod.POST;
+import static org.commonjava.auditquery.olap.handler.CallbackTarget.CallbackMethod.PUT;
 
 @ApplicationScoped
 public class ContentTrackingOLAPCallback
@@ -53,34 +58,25 @@ public class ContentTrackingOLAPCallback
 
     Function<CallbackJob, Boolean> callback = ( CallbackJob job ) -> {
         CallbackResult result = job.getResult();
-        Boolean isCallbackOK;
+        Boolean isCallbackOK = Boolean.FALSE;
         try (CloseableHttpClient client = httpFactory.createClient())
         {
 
             CallbackTarget target = result.getRequest().getCallbackTarget();
-            HttpPost post = new HttpPost( target.getUrl() );
-
-            RequestConfig rc = RequestConfig.custom()
-                                            .setSocketTimeout( TIMEOUT_IN_MILLIS )
-                                            .setConnectTimeout( TIMEOUT_IN_MILLIS )
-                                            .setConnectionRequestTimeout( TIMEOUT_IN_MILLIS )
-                                            .build();
-            post.setConfig( rc );
-
-            Map<String, String> headers = target.getHeaders();
-            if ( headers != null )
+            if ( target.getMethod().equals( POST ) )
             {
-                for ( String key : headers.keySet() )
-                {
-                    post.setHeader( key, headers.get( key ) );
-                }
+                HttpPost post = new HttpPost( target.getUrl() );
+                isCallbackOK = execute( client, post, target, result );
             }
-
-            post.addHeader( "Content-Type", "application/json" );
-            post.setEntity( new StringEntity( objectMapper.writeValueAsString( result.getResultObj() ) ) );
-            CloseableHttpResponse response = client.execute( post );
-
-            isCallbackOK = isCallbackOK( response.getStatusLine().getStatusCode() );
+            else if ( target.getMethod().equals( PUT ) )
+            {
+                HttpPut put = new HttpPut( target.getUrl() );
+                isCallbackOK = execute( client, put, target, result );
+            }
+            else
+            {
+                throw new IllegalArgumentException( target.getMethod() + " not supported" );
+            }
 
         }
         catch ( Exception e )
@@ -92,6 +88,33 @@ public class ContentTrackingOLAPCallback
         }
         return isCallbackOK;
     };
+
+    private Boolean execute( CloseableHttpClient client,
+                             HttpEntityEnclosingRequestBase request,
+                             CallbackTarget target,
+                             CallbackResult result ) throws  Exception
+    {
+        RequestConfig rc = RequestConfig.custom()
+                                        .setSocketTimeout( TIMEOUT_IN_MILLIS )
+                                        .setConnectTimeout( TIMEOUT_IN_MILLIS )
+                                        .setConnectionRequestTimeout( TIMEOUT_IN_MILLIS )
+                                        .build();
+        request.setConfig( rc );
+
+        Map<String, String> headers = target.getHeaders();
+        if ( headers != null )
+        {
+            for ( String key : headers.keySet() )
+            {
+                request.setHeader( key, headers.get( key ) );
+            }
+        }
+
+        request.addHeader( "Content-Type", "application/json" );
+        request.setEntity( new StringEntity( objectMapper.writeValueAsString( result.getResultObj() ) ) );
+        CloseableHttpResponse response = client.execute( request );
+        return isCallbackOK( response.getStatusLine().getStatusCode() );
+    }
 
     private boolean isCallbackOK( int statusCode )
     {
