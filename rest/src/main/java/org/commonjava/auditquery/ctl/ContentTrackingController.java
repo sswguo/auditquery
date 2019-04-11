@@ -2,6 +2,7 @@ package org.commonjava.auditquery.ctl;
 
 import org.commonjava.auditquery.cache.FileEventsCache;
 import org.commonjava.auditquery.cache.TrackingSummaryCache;
+import org.commonjava.auditquery.core.conf.AuditQueryConfig;
 import org.commonjava.auditquery.olap.handler.CallbackRequest;
 import org.commonjava.auditquery.olap.handler.CallbackResult;
 import org.commonjava.auditquery.tracking.TrackingSummary;
@@ -12,6 +13,7 @@ import org.commonjava.cdi.util.weft.ExecutorConfig;
 import org.commonjava.cdi.util.weft.WeftExecutorService;
 import org.commonjava.cdi.util.weft.WeftManaged;
 import org.commonjava.propulsor.content.audit.model.FileEvent;
+import org.commonjava.util.jhttpc.util.UrlUtils;
 import org.infinispan.Cache;
 import org.infinispan.query.Search;
 import org.infinispan.query.dsl.QueryFactory;
@@ -21,6 +23,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -52,6 +55,9 @@ public class ContentTrackingController
 
     @Inject
     Consumer<CallbackResult> callbackReqConsumer;
+
+    @Inject
+    AuditQueryConfig config;
 
     Logger logger = LoggerFactory.getLogger( getClass() );
 
@@ -303,13 +309,25 @@ public class ContentTrackingController
 
     Function<FileEvent, TrackedContentEntryDTO> eventToBasicEntryFunction = fileEvent -> {
         TrackedContentEntryDTO entryDTO = new TrackedContentEntryDTO();
-        entryDTO.setPath( fileEvent.getTargetPath() );
+        String path = fileEvent.getTargetPath();
+        entryDTO.setPath( path );
         entryDTO.setSha256( fileEvent.getChecksum() );
         entryDTO.setStoreKey( fileEvent.getExtra().get( "storeKey" ) );
-        entryDTO.setPath( fileEvent.getExtra().get( "path" ) );
-        entryDTO.setLocalUrl( fileEvent.getTargetLocation() );
-        //TODO Need to calculate it later
-        entryDTO.setOriginUrl( "" );
+        try
+        {
+            if ( config.getIndyUrl() != null )
+            {
+                entryDTO.setLocalUrl( UrlUtils.buildUrl( config.getIndyUrl(), path ) );
+            }
+            if ( fileEvent.getExtra().get( "sourceLocation" ) != null )
+            {
+                entryDTO.setOriginUrl( UrlUtils.buildUrl( fileEvent.getExtra().get( "sourceLocation" ), path ) );
+            }
+        }
+        catch ( MalformedURLException e )
+        {
+            logger.error( "Cannot format URL. Reason: {}", e.getMessage(), e );
+        }
         entryDTO.setAccessChannel( fileEvent.getExtra().get( "packageType" ) );
         return entryDTO;
     };

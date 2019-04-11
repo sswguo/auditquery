@@ -16,6 +16,7 @@
 
 package org.commonjava.auditquery.core.conf;
 
+import org.commonjava.propulsor.config.annotation.ConfigName;
 import org.commonjava.propulsor.config.annotation.SectionName;
 import org.commonjava.propulsor.config.section.ConfigurationSectionListener;
 
@@ -26,5 +27,16 @@ import javax.enterprise.context.ApplicationScoped;
 public class AuditQueryConfig
 {
 
-    // TODO
+    private String indyUrl;
+
+    public String getIndyUrl()
+    {
+        return indyUrl;
+    }
+
+    @ConfigName( "indy.url")
+    public void setIndyUrl( String indyUrl )
+    {
+        this.indyUrl = indyUrl;
+    }
 }
