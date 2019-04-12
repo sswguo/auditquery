@@ -1,7 +1,15 @@
 package org.commonjava.auditquery.tracking.dto;
 
-public class TrackedContentEntryDTO
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
+
+public class TrackedContentEntryDTO implements Comparable<TrackedContentEntryDTO>, Externalizable
 {
+
+    private static final int VERSION = 1;
+
     /* current artifact repository key info */
     private String storeKey;
 
@@ -72,4 +80,55 @@ public class TrackedContentEntryDTO
     public Long getSize() { return size; }
 
     public void setSize( Long size ) { this.size = size; }
+
+    @Override
+    public int compareTo( TrackedContentEntryDTO other )
+    {
+        int comp = storeKey.compareTo( other.getStoreKey() );
+        if ( comp == 0 )
+        {
+            comp = accessChannel.compareTo( other.getAccessChannel() );
+        }
+        if ( comp == 0 )
+        {
+            comp = path.compareTo( other.getPath() );
+        }
+
+        return comp;
+    }
+
+    @Override
+    public void writeExternal( ObjectOutput out ) throws IOException
+    {
+        out.writeObject( Integer.toString( VERSION ) );
+        out.writeObject( storeKey );
+        out.writeObject( accessChannel );
+        out.writeObject( path );
+        out.writeObject( originUrl );
+        out.writeObject( localUrl );
+        out.writeObject( md5 );
+        out.writeObject( sha256 );
+        out.writeObject( sha1 );
+        out.writeObject( size );
+    }
+
+    @Override
+    public void readExternal( ObjectInput in ) throws IOException, ClassNotFoundException
+    {
+        int version = Integer.parseInt( ( String )in.readObject() );
+        if ( version != VERSION )
+        {
+            throw new IOException( "Cannot deserialize. Unmatched version, class version: " + VERSION
+                                                   + " vs. the version read from the data stream: " + version);
+        }
+        storeKey = (String)in.readObject();
+        accessChannel = (String)in.readObject();
+        path = (String)in.readObject();
+        originUrl = (String)in.readObject();
+        localUrl = (String)in.readObject();
+        md5 = (String)in.readObject();
+        sha256 = (String)in.readObject();
+        sha1 = (String)in.readObject();
+        size = (Long)in.readObject();
+    }
 }

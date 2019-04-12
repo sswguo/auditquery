@@ -1,10 +1,23 @@
 package org.commonjava.auditquery.tracking;
 
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Indexed;
+
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
-public class TrackingSummary
+@Indexed
+public class TrackingSummary implements Externalizable
 {
+
+    private static final int VERSION = 1;
+
+    @Field
     private String trackingID;
 
     /* checksums */
@@ -50,4 +63,34 @@ public class TrackingSummary
     public Date getEndTime() { return endTime; }
 
     public void setEndTime( Date endTime ) { this.endTime = endTime; }
+
+    @Override
+    public void writeExternal( ObjectOutput out ) throws IOException
+    {
+        out.writeObject( Integer.toString( VERSION ) );
+        out.writeObject( trackingID );
+        out.writeObject( uploads );
+        out.writeObject( downloads );
+        out.writeObject( startTime );
+        out.writeObject( endTime );
+    }
+
+    @Override
+    public void readExternal( ObjectInput in ) throws IOException, ClassNotFoundException
+    {
+        int version = Integer.parseInt( ( String )in.readObject() );
+        if ( version != VERSION )
+        {
+            throw new IOException( "Cannot deserialize. Unmatched version, class version: " + VERSION
+                                                   + " vs. the version read from the data stream: " + version);
+        }
+        trackingID = ( String )in.readObject();
+        Set<String> ups = (Set<String>)in.readObject();
+        uploads = ups == null ? new HashSet<>() : new HashSet<>( ups );
+        Set<String> downs = (Set<String>)in.readObject();
+        downloads = downs == null ? new HashSet<>() : new HashSet<>( downs );
+        startTime = (Date)in.readObject();
+        endTime = (Date)in.readObject();
+
+    }
 }

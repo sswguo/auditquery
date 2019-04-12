@@ -37,7 +37,7 @@ const TrackingSummaryDTO = ({ match }) => (
 );
 
 const TrackingContentEntryDTO = ({ match }) => (
-    <TrackingContentEntry trackingID={match.params.trackingID} type={match.params.type}/>
+    <TrackingContentEntry trackingID={match.params.trackingID} type={match.params.type} location={location}/>
 );
 
 ReactDOM.render(

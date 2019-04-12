@@ -1,11 +1,16 @@
 package org.commonjava.auditquery.tracking.dto;
 
-import org.commonjava.auditquery.tracking.TrackingSummary;
-
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.util.Date;
 
-public class TrackingSummaryDTO
+public class TrackingSummaryDTO implements Externalizable
 {
+
+    private static final int VERSION = 1;
+
     private String trackingID;
 
     private int uploadCount;
@@ -47,4 +52,31 @@ public class TrackingSummaryDTO
     public Date getEndTime() { return endTime; }
 
     public void setEndTime( Date endTime ) { this.endTime = endTime; }
+
+    @Override
+    public void writeExternal( ObjectOutput out ) throws IOException
+    {
+        out.writeObject( Integer.toString( VERSION ) );
+        out.writeObject( trackingID );
+        out.writeObject( Integer.toString( uploadCount ) );
+        out.writeObject( Integer.toString( downloadCount ) );
+        out.writeObject( startTime );
+        out.writeObject( endTime );
+    }
+
+    @Override
+    public void readExternal( ObjectInput in ) throws IOException, ClassNotFoundException
+    {
+        int version = Integer.parseInt( ( String )in.readObject() );
+        if ( version != VERSION )
+        {
+            throw new IOException( "Cannot deserialize. Unmatched version, class version: " + VERSION
+                                                   + " vs. the version read from the data stream: " + version);
+        }
+        trackingID = (String)in.readObject();
+        uploadCount = Integer.parseInt( (String)in.readObject() );
+        downloadCount = Integer.parseInt( (String)in.readObject() );
+        startTime = (Date)in.readObject();
+        endTime = (Date)in.readObject();
+    }
 }

@@ -25,9 +25,15 @@
 
     <propulsorVersion>1.4-SNAPSHOT</propulsorVersion>
     <undertowVersion>1.4.22.Final</undertowVersion>
-    <weftVersion>1.4.1</weftVersion>
+    <weftVersion>1.10</weftVersion>
     <slf4jVersion>1.7.25</slf4jVersion>
     <jackson-version>2.9.8</jackson-version>
+    <infinispanVersion>9.4.7.Final</infinispanVersion>
+    <hibernateVersion>5.8.1.Final</hibernateVersion>
+    <httpcoreVersion>4.4.6</httpcoreVersion>
+    <httpclientVersion>4.5.3</httpclientVersion>
+    <jhttpcVersion>1.9</jhttpcVersion>
+    <junitVersion>4.12</junitVersion>
   </properties>
 
   <modules>
@@ -36,6 +42,7 @@
     <module>model-java</module>
     <module>core</module>
     <module>uis</module>
+    <module>cache</module>
   </modules>
 
   <dependencyManagement>
@@ -72,6 +79,11 @@
         <artifactId>propulsor-configuration-dotconf</artifactId>
         <version>${propulsorVersion}</version>
       </dependency>
+      <dependency>
+        <groupId>org.commonjava.propulsor.content-audit</groupId>
+        <artifactId>propulsor-content-audit-api</artifactId>
+        <version>${propulsorVersion}</version>
+      </dependency>
 
       <dependency>
         <groupId>org.commonjava.cdi.util</groupId>
@@ -92,6 +104,11 @@
       <dependency>
         <groupId>org.commonjava.auditquery</groupId>
         <artifactId>auditquery-core</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.commonjava.auditquery</groupId>
+        <artifactId>auditquery-cache</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -137,6 +154,59 @@
         <version>${slf4jVersion}</version>
       </dependency>
 
+      <dependency>
+        <groupId>org.infinispan</groupId>
+        <artifactId>infinispan-cdi-embedded</artifactId>
+        <version>${infinispanVersion}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.infinispan</groupId>
+        <artifactId>infinispan-core</artifactId>
+        <version>${infinispanVersion}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.infinispan</groupId>
+        <artifactId>infinispan-query</artifactId>
+        <version>${infinispanVersion}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.infinispan</groupId>
+        <artifactId>infinispan-query-dsl</artifactId>
+        <version>${infinispanVersion}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.hibernate</groupId>
+        <artifactId>hibernate-search-orm</artifactId>
+        <version>${hibernateVersion}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.hibernate</groupId>
+        <artifactId>hibernate-search-engine</artifactId>
+        <version>${hibernateVersion}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.httpcomponents</groupId>
+        <artifactId>httpcore</artifactId>
+        <version>${httpcoreVersion}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.httpcomponents</groupId>
+        <artifactId>httpclient</artifactId>
+        <version>${httpclientVersion}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.commonjava.util</groupId>
+        <artifactId>jhttpc</artifactId>
+        <version>${jhttpcVersion}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>${junitVersion}</version>
+        <scope>test</scope>
+      </dependency>
 
     </dependencies>
   </dependencyManagement>
