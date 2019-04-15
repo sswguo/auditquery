@@ -24,5 +24,9 @@ module.exports =
                 use: ['style-loader', 'css-loader'],
               }
         ]
+    },
+    devServer: {
+      port: 3000,
+      contentBase: './dist'
     }
 }
