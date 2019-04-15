@@ -21,12 +21,7 @@
             <groupId>javax.enterprise</groupId>
             <artifactId>cdi-api</artifactId>
         </dependency>
-
-        <dependency>
-            <groupId>org.commonjava.propulsor.content-audit</groupId>
-            <artifactId>propulsor-content-audit-api</artifactId>
-        </dependency>
-
+        
         <dependency>
             <groupId>org.commonjava.auditquery</groupId>
             <artifactId>auditquery-model-java</artifactId>
