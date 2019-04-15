@@ -43,6 +43,7 @@
     <module>core</module>
     <module>uis</module>
     <module>cache</module>
+    <module>api</module>
   </modules>
 
   <dependencyManagement>
@@ -114,6 +115,11 @@
       <dependency>
         <groupId>org.commonjava.auditquery</groupId>
         <artifactId>auditquery-ui-layover</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.commonjava.auditquery</groupId>
+        <artifactId>auditquery-api</artifactId>
         <version>${project.version}</version>
       </dependency>
 
