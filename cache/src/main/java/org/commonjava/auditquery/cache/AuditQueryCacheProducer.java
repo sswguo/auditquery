@@ -2,7 +2,7 @@ package org.commonjava.auditquery.cache;
 
 import org.commonjava.auditquery.tracking.TrackingSummary;
 import org.commonjava.auditquery.tracking.dto.TrackedContentDTO;
-import org.commonjava.propulsor.content.audit.model.FileEvent;
+import org.commonjava.auditquery.fileevent.FileEvent;
 import org.hibernate.search.annotations.Analyze;
 import org.hibernate.search.annotations.Factory;
 import org.hibernate.search.annotations.Resolution;

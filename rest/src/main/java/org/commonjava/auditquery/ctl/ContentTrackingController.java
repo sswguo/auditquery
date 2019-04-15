@@ -12,7 +12,7 @@ import org.commonjava.auditquery.tracking.dto.TrackingSummaryDTO;
 import org.commonjava.cdi.util.weft.ExecutorConfig;
 import org.commonjava.cdi.util.weft.WeftExecutorService;
 import org.commonjava.cdi.util.weft.WeftManaged;
-import org.commonjava.propulsor.content.audit.model.FileEvent;
+import org.commonjava.auditquery.fileevent.FileEvent;
 import org.commonjava.util.jhttpc.util.UrlUtils;
 import org.infinispan.Cache;
 import org.infinispan.query.Search;
@@ -312,16 +312,19 @@ public class ContentTrackingController
         String path = fileEvent.getTargetPath();
         entryDTO.setPath( path );
         entryDTO.setSha256( fileEvent.getChecksum() );
-        entryDTO.setStoreKey( fileEvent.getExtra().get( "storeKey" ) );
+        entryDTO.setStoreKey( fileEvent.getStoreKey() );
+        entryDTO.setMd5( fileEvent.getMd5() );
+        entryDTO.setSha1( fileEvent.getSha1() );
+        entryDTO.setSize( fileEvent.getSize() );
         try
         {
             if ( config.getIndyUrl() != null )
             {
                 entryDTO.setLocalUrl( UrlUtils.buildUrl( config.getIndyUrl(), path ) );
             }
-            if ( fileEvent.getExtra().get( "sourceLocation" ) != null )
+            if ( fileEvent.getSourceLocation() != null )
             {
-                entryDTO.setOriginUrl( UrlUtils.buildUrl( fileEvent.getExtra().get( "sourceLocation" ), path ) );
+                entryDTO.setOriginUrl( UrlUtils.buildUrl( fileEvent.getSourceLocation(), path ) );
             }
         }
         catch ( MalformedURLException e )
@@ -333,9 +336,9 @@ public class ContentTrackingController
     };
 
     Function<List<FileEvent>, FileEvent> minEventFunction =
-                    list -> list.stream().min( Comparator.comparing( i -> i.getTimestamp() ) ).get();
+                    list -> list.stream().min( Comparator.comparing( FileEvent::getTimestamp ) ).get();
 
     Function<List<FileEvent>, FileEvent> maxEventFunction =
-                    list -> list.stream().max( Comparator.comparing( i -> i.getTimestamp() ) ).get();
+                    list -> list.stream().max( Comparator.comparing( FileEvent::getTimestamp ) ).get();
 
 }

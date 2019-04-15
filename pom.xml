@@ -81,12 +81,6 @@
         <version>${propulsorVersion}</version>
       </dependency>
       <dependency>
-        <groupId>org.commonjava.propulsor.content-audit</groupId>
-        <artifactId>propulsor-content-audit-api</artifactId>
-        <version>${propulsorVersion}</version>
-      </dependency>
-
-      <dependency>
         <groupId>org.commonjava.cdi.util</groupId>
         <artifactId>weft</artifactId>
         <version>${weftVersion}</version>
