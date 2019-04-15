@@ -103,10 +103,11 @@ public class FileGroupingEvent implements Comparable<FileGroupingEvent>, Externa
     public void readExternal( ObjectInput in ) throws IOException, ClassNotFoundException
     {
         int version = Integer.parseInt( ( String )in.readObject() );
-        if ( version != VERSION )
+        if ( version > VERSION )
         {
-            throw new IOException( "Cannot deserialize. Unmatched version, class version: " + VERSION
-                                                   + " vs. the version read from the data stream: " + version);
+            throw new IOException(
+                            "Cannot deserialize. This class is of an older version: " + VERSION +
+                                            " vs. the version read from the data stream: " + version + "." );
         }
         eventId = ( UUID )in.readObject();
         sessionId = ( String )in.readObject();
