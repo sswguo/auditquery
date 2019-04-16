@@ -15,7 +15,10 @@
     "react-table": "^6.8.6"
   },
   "scripts": {
-    "build": "webpack"
+    "deploy": "cp -r ./public/* ./dist/",
+    "build": "npm run clean && npm run compile && npm run deploy",
+    "clean": "rm -rf ./dist/*",
+    "compile": "NODE_ENV=production webpack --config ./webpack.config.js --progress"
   },
   "devDependencies": {
     "@babel/core": "^7.2.2",
