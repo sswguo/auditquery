@@ -52,6 +52,12 @@ public class FileEvent implements Comparable<FileEvent>, Externalizable
     @JsonFormat( shape = JsonFormat.Shape.STRING )
     private Date timestamp;
 
+    public FileEvent()
+    {
+        this.eventId = UUID.randomUUID();
+        this.eventVersion = 1;
+    }
+
     public FileEvent( @JsonProperty("eventType") FileEventType eventType )
     {
         this.eventId = UUID.randomUUID();
