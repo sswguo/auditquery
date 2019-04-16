@@ -15,7 +15,14 @@
     "react-table": "^6.8.6"
   },
   "scripts": {
-    "build": "webpack"
+    "yarn": "node node_modules/yarn/bin/yarn.js",
+    "webpack": "node node_modules/webpack/bin/webpack.js",
+    "npm": "node/node_modules/npm/bin/npm",
+    "deploy": "cp -r ./public/* ./dist/",
+    "build": "npm run clean && npm run prod-compile && npm run deploy",
+    "clean": "rm -rf ./dist/*",
+    "compile": "NODE_ENV=production webpack --config ./webpack.config.js --progress",
+    "prod-compile": "NODE_ENV=production webpack --config ./webpack.config.prod.js --progress"
   },
   "devDependencies": {
     "@babel/core": "^7.2.2",
@@ -26,6 +33,7 @@
     "css-loader": "^2.0.0",
     "style-loader": "^0.23.1",
     "webpack": "^4.27.1",
-    "webpack-cli": "^3.1.2"
+    "webpack-cli": "^3.1.2",
+    "yarn": "1.10.1"
   }
 }
