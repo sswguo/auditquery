@@ -38,6 +38,12 @@ public class FileGroupingEvent implements Comparable<FileGroupingEvent>, Externa
     @JsonFormat( shape = JsonFormat.Shape.STRING )
     private Date timestamp;
 
+    public FileGroupingEvent()
+    {
+        this.eventId = UUID.randomUUID();
+        this.eventVersion = 1;
+    }
+
     public FileGroupingEvent( @JsonProperty( "eventType" ) FileGroupingEventType eventType )
     {
         this.eventId = UUID.randomUUID();
