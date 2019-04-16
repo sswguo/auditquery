@@ -19,6 +19,7 @@ public class CacheProducer
 {
 
     EmbeddedCacheManager cacheManager;
+    EmbeddedCacheManager clusterCacheManager;
 
     public CacheProducer()
     {
@@ -31,6 +32,9 @@ public class CacheProducer
         try
         {
             cacheManager = new DefaultCacheManager("infinispan.xml");
+            clusterCacheManager = new DefaultCacheManager( "infinispan-cluster.xml" );
+
+            clusterCacheManager.startCaches( String.join( ",", clusterCacheManager.getCacheNames() ) );
         }
         catch ( IOException e )
         {
@@ -41,7 +45,19 @@ public class CacheProducer
 
     public <K, V> Cache<K, V> getCache(String name)
     {
-        return cacheManager.getCache( name );
+        Logger logger = LoggerFactory.getLogger( getClass() );
+        Cache<K, V> cache;
+        if ( clusterCacheManager.cacheExists( name ) )
+        {
+            logger.info( "Cluster cache retrieved. {}", name );
+            cache = clusterCacheManager.getCache( name );
+        }
+        else
+        {
+            logger.info( "Cluster cache missing, try to get local cache: {}", name  );
+            cache = cacheManager.getCache( name );
+        }
+        return cache;
     }
 
 }
