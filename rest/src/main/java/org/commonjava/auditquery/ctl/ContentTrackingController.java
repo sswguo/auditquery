@@ -2,7 +2,7 @@ package org.commonjava.auditquery.ctl;
 
 import org.commonjava.auditquery.cache.FileEventsCache;
 import org.commonjava.auditquery.cache.TrackingSummaryCache;
-import org.commonjava.auditquery.core.conf.AuditQueryConfig;
+import org.commonjava.auditquery.conf.RestConfig;
 import org.commonjava.auditquery.olap.handler.CallbackRequest;
 import org.commonjava.auditquery.olap.handler.CallbackResult;
 import org.commonjava.auditquery.tracking.TrackingSummary;
@@ -57,7 +57,7 @@ public class ContentTrackingController
     Consumer<CallbackResult> callbackReqConsumer;
 
     @Inject
-    AuditQueryConfig config;
+    RestConfig config;
 
     Logger logger = LoggerFactory.getLogger( getClass() );
 
