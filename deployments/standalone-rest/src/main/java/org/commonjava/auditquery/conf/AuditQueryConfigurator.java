@@ -16,7 +16,6 @@
 
 package org.commonjava.auditquery.conf;
 
-import org.commonjava.auditquery.core.conf.AuditQueryConfigInfo;
 import org.commonjava.auditquery.core.conf.SystemPropertyProvider;
 import org.commonjava.propulsor.boot.BootOptions;
 import org.commonjava.propulsor.config.ConfigurationException;
@@ -42,7 +41,7 @@ public class AuditQueryConfigurator
     DotConfConfigurationReader configurationReader;
 
     @Inject
-    Instance<AuditQueryConfigInfo> configs;
+    Instance<SystemPropertyProvider> propertyProviders;
 
     @Override
     public void load( BootOptions options ) throws ConfiguratorException
@@ -61,13 +60,9 @@ public class AuditQueryConfigurator
         }
 
         Properties sysprops = System.getProperties();
-        configs.forEach( (conf) -> {
-            if( conf instanceof SystemPropertyProvider )
-            {
-                Properties p =  ((SystemPropertyProvider) conf).getSystemProperties();
-                p.stringPropertyNames().forEach( ( name ) -> sysprops.setProperty( name, p.getProperty( name ) ) );
-
-            }
+        propertyProviders.forEach( (provider) -> {
+            Properties p =  provider.getSystemProperties();
+            p.stringPropertyNames().forEach( ( name ) -> sysprops.setProperty( name, p.getProperty( name ) ) );
         } );
         System.setProperties( sysprops );
     }
