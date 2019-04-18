@@ -16,17 +16,17 @@
 
 package org.commonjava.auditquery.core.inject;
 
-import org.commonjava.auditquery.core.conf.AuditQueryConfig;
+import org.commonjava.auditquery.core.conf.AuditQueryConfigInfo;
 import org.commonjava.propulsor.config.ConfigurationException;
 import org.commonjava.propulsor.config.ConfigurationRegistry;
 import org.commonjava.propulsor.config.DefaultConfigurationListener;
 import org.commonjava.propulsor.config.DefaultConfigurationRegistry;
-import org.commonjava.propulsor.config.section.BeanSectionListener;
 import org.commonjava.propulsor.deploy.undertow.ui.UIConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 
@@ -35,10 +35,10 @@ public class ConfigRegistryProducer
 {
 
     @Inject
-    AuditQueryConfig auditQueryConfig;
+    UIConfiguration config;
 
     @Inject
-    UIConfiguration config;
+    Instance<AuditQueryConfigInfo> configs;
 
     @Produces
     public ConfigurationRegistry getConfigurationRegistry() throws ConfigurationException
@@ -47,9 +47,20 @@ public class ConfigRegistryProducer
         logger.info( "AuditQuery service configuration registry producer." );
 
         DefaultConfigurationListener configListener =
-                        new DefaultConfigurationListener( new BeanSectionListener( auditQueryConfig ) );
+                        new DefaultConfigurationListener();
 
         configListener.with( config );
+
+        configs.forEach( (conf) -> {
+            try
+            {
+                configListener.with( conf );
+            }
+            catch ( ConfigurationException e )
+            {
+                logger.error( "Load configuration error, config:{}, error: {}", conf.getClass(), e.getMessage(), e );
+            }
+        });
 
         return new DefaultConfigurationRegistry( configListener );
     }

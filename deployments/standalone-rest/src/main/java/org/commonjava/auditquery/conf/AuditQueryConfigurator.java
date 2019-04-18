@@ -16,6 +16,7 @@
 
 package org.commonjava.auditquery.conf;
 
+import org.commonjava.auditquery.core.conf.SystemPropertyProvider;
 import org.commonjava.propulsor.boot.BootOptions;
 import org.commonjava.propulsor.config.ConfigurationException;
 import org.commonjava.propulsor.config.Configurator;
@@ -24,10 +25,12 @@ import org.commonjava.propulsor.config.dotconf.DotConfConfigurationReader;
 import org.commonjava.propulsor.config.io.ConfigFileUtils;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Properties;
 
 @ApplicationScoped
 public class AuditQueryConfigurator
@@ -36,6 +39,9 @@ public class AuditQueryConfigurator
 
     @Inject
     DotConfConfigurationReader configurationReader;
+
+    @Inject
+    Instance<SystemPropertyProvider> propertyProviders;
 
     @Override
     public void load( BootOptions options ) throws ConfiguratorException
@@ -52,5 +58,12 @@ public class AuditQueryConfigurator
             throw new ConfiguratorException( "Failed to read configuration: %s. Reason: %s", e, config,
                                              e.getMessage() );
         }
+
+        Properties sysprops = System.getProperties();
+        propertyProviders.forEach( (provider) -> {
+            Properties p =  provider.getSystemProperties();
+            p.stringPropertyNames().forEach( ( name ) -> sysprops.setProperty( name, p.getProperty( name ) ) );
+        } );
+        System.setProperties( sysprops );
     }
 }

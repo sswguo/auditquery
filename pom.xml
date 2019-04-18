@@ -34,6 +34,7 @@
     <httpclientVersion>4.5.3</httpclientVersion>
     <jhttpcVersion>1.9</jhttpcVersion>
     <junitVersion>4.12</junitVersion>
+    <commonslang3Version>3.8</commonslang3Version>
   </properties>
 
   <modules>
@@ -208,6 +209,11 @@
         <scope>test</scope>
       </dependency>
 
+      <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-lang3</artifactId>
+        <version>${commonslang3Version}</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 </project>
