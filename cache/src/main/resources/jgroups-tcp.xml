@@ -3,7 +3,7 @@
         xsi:schemaLocation="urn:org:jgroups http://www.jgroups.org/schema/jgroups-4.0.xsd">
 
     <TCP
-            bind_port="7800"
+            bind_port="${jgroups.tcp.bind_port}"
             enable_diagnostics="false"
             thread_naming_pattern="pl"
             send_buf_size="640k"
@@ -15,8 +15,7 @@
             thread_pool.keep_alive_time="60000"
     />
 
-    <!-- TODO Make this configurable -->
-    <TUNNEL gossip_router_hosts="10.66.137.98[12001]" />
+    <TUNNEL gossip_router_hosts="${jgroups.gossip_router_hosts}:HostA[12001],HostB[12001]" />
     <PING />
 
     <MERGE3 min_interval="10000"
