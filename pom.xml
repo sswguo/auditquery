@@ -35,6 +35,7 @@
     <jhttpcVersion>1.9</jhttpcVersion>
     <junitVersion>4.12</junitVersion>
     <commonslang3Version>3.8</commonslang3Version>
+    <jgroupsVersion>4.0.4.Final</jgroupsVersion>
   </properties>
 
   <modules>
@@ -213,6 +214,11 @@
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-lang3</artifactId>
         <version>${commonslang3Version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jgroups</groupId>
+        <artifactId>jgroups</artifactId>
+        <version>${jgroupsVersion}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

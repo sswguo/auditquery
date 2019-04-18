@@ -21,7 +21,6 @@
             <groupId>javax.enterprise</groupId>
             <artifactId>cdi-api</artifactId>
         </dependency>
-        
         <dependency>
             <groupId>org.commonjava.auditquery</groupId>
             <artifactId>auditquery-core</artifactId>
@@ -65,6 +64,19 @@
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-search-engine</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
         </dependency>
 
         <dependency>
