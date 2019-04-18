@@ -8,9 +8,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
 import javax.annotation.PostConstruct;
-import javax.inject.Singleton;
+import javax.enterprise.inject.Alternative;
+import javax.inject.Named;
 
-@Singleton
+@Alternative
+@Named
 public class AuditQueryObjectMapper extends ObjectMapper
 {
     @PostConstruct

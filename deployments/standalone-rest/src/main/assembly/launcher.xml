@@ -53,6 +53,7 @@
             <outputDirectory>bin</outputDirectory>
             <includes>
                 <include>*.sh</include>
+                <include>*.properties</include>
             </includes>
             <fileMode>0755</fileMode>
         </fileSet>

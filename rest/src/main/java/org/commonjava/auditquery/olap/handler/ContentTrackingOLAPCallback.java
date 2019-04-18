@@ -1,6 +1,5 @@
 package org.commonjava.auditquery.olap.handler;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
@@ -8,6 +7,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.commonjava.auditquery.tracking.io.AuditQueryObjectMapper;
 import org.commonjava.util.jhttpc.HttpFactory;
 import org.commonjava.util.jhttpc.auth.ClientAuthenticator;
 import org.slf4j.Logger;
@@ -33,7 +33,7 @@ public class ContentTrackingOLAPCallback
     private final int TIMEOUT_IN_MILLIS = 30000;
 
     @Inject
-    ObjectMapper objectMapper;
+    AuditQueryObjectMapper objectMapper;
 
     @Inject
     RetriableProcessor retriableProcessor;

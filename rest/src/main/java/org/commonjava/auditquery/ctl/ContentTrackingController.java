@@ -1,8 +1,10 @@
 package org.commonjava.auditquery.ctl;
 
+
 import org.commonjava.auditquery.cache.FileEventsCache;
 import org.commonjava.auditquery.cache.TrackingSummaryCache;
 import org.commonjava.auditquery.conf.RestConfig;
+import org.commonjava.auditquery.fileevent.FileEvent;
 import org.commonjava.auditquery.olap.handler.CallbackRequest;
 import org.commonjava.auditquery.olap.handler.CallbackResult;
 import org.commonjava.auditquery.tracking.TrackingSummary;
@@ -12,7 +14,6 @@ import org.commonjava.auditquery.tracking.dto.TrackingSummaryDTO;
 import org.commonjava.cdi.util.weft.ExecutorConfig;
 import org.commonjava.cdi.util.weft.WeftExecutorService;
 import org.commonjava.cdi.util.weft.WeftManaged;
-import org.commonjava.auditquery.fileevent.FileEvent;
 import org.commonjava.util.jhttpc.util.UrlUtils;
 import org.infinispan.Cache;
 import org.infinispan.query.Search;
@@ -100,12 +101,27 @@ public class ContentTrackingController
                                                 .map( entryDTO -> {
                                                     List<FileEvent> storageEventList =
                                                                     storageEventsMap.get( entryDTO.getSha256() );
+                                                    if ( storageEventList != null && !storageEventList.isEmpty() )
+                                                    {
+                                                        FileEvent first = minEventFunction.apply( storageEventList );
+                                                        FileEvent last = maxEventFunction.apply( storageEventList );
+                                                        try
+                                                        {
+                                                            if ( config.getIndyUrl() != null )
+                                                            {
+                                                                entryDTO.setLocalUrl( UrlUtils.buildUrl( config.getIndyUrl(), first.getTargetPath() ) );
+                                                            }
+                                                            if ( last.getSourceLocation() != null )
+                                                            {
+                                                                entryDTO.setOriginUrl( UrlUtils.buildUrl( last.getSourceLocation(), last.getSourcePath() ) );
+                                                            }
+                                                        }
+                                                        catch ( MalformedURLException e )
+                                                        {
+                                                            logger.error( "Cannot format URL. Reason: {}", e.getMessage(), e );
+                                                        }
 
-                                                    FileEvent first = minEventFunction.apply( storageEventList );
-                                                    FileEvent last = maxEventFunction.apply( storageEventList );
-
-                                                    entryDTO.setOriginUrl( first.getTargetLocation() );
-                                                    entryDTO.setLocalUrl( last.getTargetLocation() );
+                                                    }
                                                     return entryDTO;
                                                 } )
                                                 .collect( Collectors.toSet() );
@@ -153,15 +169,30 @@ public class ContentTrackingController
                                                                                List<FileEvent> storageEventList =
                                                                                                storageEventsMap.get(
                                                                                                                checksum );
-                                                                               FileEvent first = minEventFunction.apply(
-                                                                                               storageEventList );
-                                                                               FileEvent last = maxEventFunction.apply(
-                                                                                               storageEventList );
 
-                                                                               entryDTO.setOriginUrl(
-                                                                                               first.getTargetLocation() );
-                                                                               entryDTO.setLocalUrl(
-                                                                                               last.getTargetLocation() );
+                                                                               if ( storageEventList!= null && !storageEventList.isEmpty() )
+                                                                               {
+                                                                                   FileEvent first = minEventFunction.apply(
+                                                                                                   storageEventList );
+                                                                                   FileEvent last = maxEventFunction.apply(
+                                                                                                   storageEventList );
+
+                                                                                   try
+                                                                                   {
+                                                                                       if ( config.getIndyUrl() != null )
+                                                                                       {
+                                                                                           entryDTO.setLocalUrl( UrlUtils.buildUrl( config.getIndyUrl(), first.getTargetPath() ) );
+                                                                                       }
+                                                                                       if ( last.getSourceLocation() != null )
+                                                                                       {
+                                                                                           entryDTO.setOriginUrl( UrlUtils.buildUrl( last.getSourceLocation(), last.getSourcePath() ) );
+                                                                                       }
+                                                                                   }
+                                                                                   catch ( MalformedURLException e )
+                                                                                   {
+                                                                                       logger.error( "Cannot format URL. Reason: {}", e.getMessage(), e );
+                                                                                   }
+                                                                               }
                                                                                return entryDTO;
                                                                            } )
                                                                            .collect( Collectors.toSet() );
@@ -300,7 +331,6 @@ public class ContentTrackingController
                                                                .toBuilder();
 
         List<FileEvent> fileStorageEvents = qb.build().list();
-
         logger.info( "Grouping the storage events according to the checksum." );
         Map<String, List<FileEvent>> storageEventsMap =
                         fileStorageEvents.stream().collect( Collectors.groupingBy( event -> event.getChecksum() ) );
