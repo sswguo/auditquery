@@ -1,5 +1,7 @@
 package org.commonjava.auditquery.cache;
 
+import org.apache.commons.io.FileUtils;
+import org.commonjava.auditquery.core.conf.DefaultAuditQueryConfig;
 import org.infinispan.Cache;
 import org.infinispan.manager.DefaultCacheManager;
 import org.infinispan.manager.EmbeddedCacheManager;
@@ -8,6 +10,9 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 
 
@@ -18,8 +23,16 @@ import java.io.IOException;
 public class CacheProducer
 {
 
+    @Inject
+    DefaultAuditQueryConfig config;
+
+    private static final String ISPN_XML = "infinispan.xml";
+    private static final String ISPN_CLUSTER_XML = "infinispan-cluster.xml";
+
     EmbeddedCacheManager cacheManager;
     EmbeddedCacheManager clusterCacheManager;
+
+    Logger logger = LoggerFactory.getLogger( getClass() );
 
     public CacheProducer()
     {
@@ -29,23 +42,55 @@ public class CacheProducer
     @PostConstruct
     public void start()
     {
-        try
-        {
-            cacheManager = new DefaultCacheManager("infinispan.xml");
-            clusterCacheManager = new DefaultCacheManager( "infinispan-cluster.xml" );
+        String configDir = config.getConfigDir();
+        File ispnConf = new File( configDir, ISPN_XML );
+        File ispnClusterConf = new File( configDir, ISPN_CLUSTER_XML );
 
-            clusterCacheManager.startCaches( String.join( ",", clusterCacheManager.getCacheNames() ) );
-        }
-        catch ( IOException e )
+        if ( ispnConf.exists() )
         {
-            Logger logger = LoggerFactory.getLogger( getClass() );
-            logger.error( "Read ISPN configuration error, {}", e.getMessage(), e );
+            logger.info( " Loading ISPN config file {} from dir {} . ", ISPN_XML, configDir );
+            try ( FileInputStream ispnStream = FileUtils.openInputStream( ispnConf ) )
+            {
+                cacheManager = new DefaultCacheManager( ispnStream );
+            }
+            catch ( IOException e )
+            {
+                logger.error( "Read ISPN configuration error, {}", e.getMessage(), e );
+            }
+
+            if ( ispnClusterConf.exists() )
+            {
+                logger.info( " Loading ISPN cluster config file {} from dir {} . ", ISPN_CLUSTER_XML, configDir );
+                try ( FileInputStream ispnClusterStream = FileUtils.openInputStream( ispnClusterConf ) )
+                {
+                    clusterCacheManager = new DefaultCacheManager( ispnClusterStream );
+                    clusterCacheManager.startCaches( String.join( ",", clusterCacheManager.getCacheNames() ) );
+                }
+                catch ( IOException e )
+                {
+                    logger.error( "Read ISPN cluster configuration error, {}", e.getMessage(), e );
+                }
+            }
+        }
+        else
+        {
+            logger.info( " Loading ISPN config files from CLASSPATH. " );
+            try
+            {
+                cacheManager = new DefaultCacheManager( ISPN_XML );
+                clusterCacheManager = new DefaultCacheManager( ISPN_CLUSTER_XML );
+
+                clusterCacheManager.startCaches( String.join( ",", clusterCacheManager.getCacheNames() ) );
+            }
+            catch ( IOException e )
+            {
+                logger.error( "Read ISPN configuration error, {}", e.getMessage(), e );
+            }
         }
     }
 
     public <K, V> Cache<K, V> getCache(String name)
     {
-        Logger logger = LoggerFactory.getLogger( getClass() );
         Cache<K, V> cache;
         if ( clusterCacheManager.cacheExists( name ) )
         {

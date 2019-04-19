@@ -36,6 +36,7 @@
     <junitVersion>4.12</junitVersion>
     <commonslang3Version>3.8</commonslang3Version>
     <jgroupsVersion>4.0.4.Final</jgroupsVersion>
+    <commonsioVersion>2.6</commonsioVersion>
   </properties>
 
   <modules>
@@ -219,6 +220,11 @@
         <groupId>org.jgroups</groupId>
         <artifactId>jgroups</artifactId>
         <version>${jgroupsVersion}</version>
+      </dependency>
+      <dependency>
+        <groupId>commons-io</groupId>
+        <artifactId>commons-io</artifactId>
+        <version>${commonsioVersion}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
