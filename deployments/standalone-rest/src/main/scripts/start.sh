@@ -20,6 +20,12 @@ THIS=$(cd ${0%/*} && echo $PWD/${0##*/})
 BASEDIR=`dirname ${THIS}`
 BASEDIR=`dirname ${BASEDIR}`
 
+AQ_LOGCONF_DIR=${INDY_LOGCONF_DIR:-${BASEDIR}/etc/auditquery/logging}
+
+echo "Loading logging config from: ${AQ_LOGCONF_DIR}"
+
+CP="${AQ_LOGCONF_DIR}"
+
 for f in $(find $BASEDIR/lib/*.jar -type f)
 do
   CP=${CP}:${f}
