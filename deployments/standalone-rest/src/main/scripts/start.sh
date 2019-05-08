@@ -20,6 +20,12 @@ THIS=$(cd ${0%/*} && echo $PWD/${0##*/})
 BASEDIR=`dirname ${THIS}`
 BASEDIR=`dirname ${BASEDIR}`
 
+AQ_CONF_DIR=${AQ_CONF_DIR:-${BASEDIR}/conf}
+
+echo "Loading extra config from classpath directory: ${AQ_CONF_DIR}"
+
+CP="${AQ_CONF_DIR}"
+
 for f in $(find $BASEDIR/lib/*.jar -type f)
 do
   CP=${CP}:${f}
