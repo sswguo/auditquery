@@ -26,16 +26,6 @@
             </indexing>
         </local-cache>
 
-        <local-cache name="file_event_cache" configuration="local-template">
-            <memory>
-                <object size="40000" strategy="REMOVE"/>
-            </memory>
-            <indexing index="LOCAL">
-                <property name="default.directory_provider">ram</property>
-                <property name="hibernate.search.model_mapping">org.commonjava.auditquery.cache.AuditQueryCacheProducer</property>
-            </indexing>
-        </local-cache>
-
         <local-cache name="repo-changelog" configuration="local-template">
             <!-- just disable persistence now, will see if needs to be enabled future
             <persistence passivation="true">
