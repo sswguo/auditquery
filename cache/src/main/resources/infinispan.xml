@@ -25,6 +25,18 @@
                 <property name="default.directory_provider">ram</property>
             </indexing>
         </local-cache>
+
+        <local-cache name="repo-changelog" configuration="local-template">
+            <!-- just disable persistence now, will see if needs to be enabled future
+            <persistence passivation="true">
+                <file-store shared="false" preload="false" fetch-state="false" path="${indy.data}/changelog"/>
+            </persistence>
+            -->
+            <indexing index="LOCAL">
+                <property name="default.directory_provider">ram</property>
+            </indexing>
+        </local-cache>
+
     </cache-container>
 
 </infinispan>

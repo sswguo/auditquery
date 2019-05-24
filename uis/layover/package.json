@@ -18,6 +18,7 @@
     "yarn": "node node_modules/yarn/bin/yarn.js",
     "webpack": "node node_modules/webpack/bin/webpack.js",
     "npm": "node/node_modules/npm/bin/npm",
+    "dev": "webpack-dev-server --open",
     "deploy": "cp -r ./public/* ./dist/",
     "build": "npm run clean && npm run prod-compile && npm run deploy",
     "clean": "rm -rf ./dist/*",
@@ -34,6 +35,8 @@
     "style-loader": "^0.23.1",
     "webpack": "^4.27.1",
     "webpack-cli": "^3.1.2",
+    "webpack-dev-server": "^3.1.8",
+    "clean-webpack-plugin": "^2.0.1",
     "yarn": "1.10.1"
   }
 }

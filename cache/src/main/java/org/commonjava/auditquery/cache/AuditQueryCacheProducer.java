@@ -3,6 +3,7 @@ package org.commonjava.auditquery.cache;
 import org.commonjava.auditquery.fileevent.FileEvent;
 import org.commonjava.auditquery.tracking.TrackingSummary;
 import org.commonjava.auditquery.tracking.dto.TrackedContentDTO;
+import org.commonjava.auditquery.changelog.RepositoryChangeLog;
 import org.infinispan.Cache;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -19,8 +20,10 @@ public class AuditQueryCacheProducer
 
     private static final String TRACKED_CONTENT_DTO_CACHE = "tracked_content_dto_cache";
 
+    private static final String REPO_CHANGELOG_CACHE = "repo-changelog";
+
     @Inject
-    CacheProducer cacheProvider;
+    private CacheProducer cacheProvider;
 
     @Produces
     @TrackingSummaryCache
@@ -41,5 +44,12 @@ public class AuditQueryCacheProducer
     public Cache<String, TrackedContentDTO> createTrackedContentDTOCache()
     {
         return cacheProvider.getCache( TRACKED_CONTENT_DTO_CACHE );
+    }
+
+    @Produces
+    @RepoChangelogCache
+    public Cache<String, RepositoryChangeLog> createRepoChangelogCache()
+    {
+        return cacheProvider.getCache( REPO_CHANGELOG_CACHE );
     }
 }
