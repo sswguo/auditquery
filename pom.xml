@@ -27,7 +27,7 @@
     <undertowVersion>1.4.22.Final</undertowVersion>
     <weftVersion>1.10</weftVersion>
     <slf4jVersion>1.7.25</slf4jVersion>
-    <jackson-version>2.9.8</jackson-version>
+    <jackson-version>2.9.9</jackson-version>
     <infinispanVersion>9.4.7.Final</infinispanVersion>
     <hibernateVersion>5.8.1.Final</hibernateVersion>
     <httpcoreVersion>4.4.6</httpcoreVersion>
