@@ -15,9 +15,8 @@
  */
 package org.commonjava.auditquery.rest.resources;
 
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import org.commonjava.auditquery.changelog.RepositoryChangeLog;
+import org.commonjava.auditquery.changelog.dto.RepoChangelogDTO;
 import org.commonjava.auditquery.ctl.RepoChangelogController;
 import org.commonjava.propulsor.deploy.resteasy.RestResources;
 
@@ -31,6 +30,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+import java.util.List;
 
 import static org.commonjava.propulsor.deploy.undertow.util.StandardApplicationContent.application_json;
 
@@ -48,21 +48,32 @@ public class RepoChangelogResource
     public Response getChangelogByStoreKey( final @PathParam( "packageType" ) String packageType,
                                             final @PathParam( "type" ) String type,
                                             final @PathParam( "name" ) String name,
-                                            final @QueryParam( "pageMax" ) int pageMax,
-                                            final @QueryParam( "pageStart" ) int pagetStart,
-                                            @Context final UriInfo uriInfo )
+                                            final @QueryParam( "pageSize" ) int pageSize,
+                                            final @QueryParam( "page" ) int page, @Context final UriInfo uriInfo )
     {
         String key = String.format( "%s:%s:%s", packageType, type, name );
-        return Response.status( 200 ).entity( ctl.getLogsByStoreKey( key, pageMax, pagetStart ) ).build();
+        int startIndex = page * pageSize;
+        final Integer total = ctl.sizeOfLogsByStoreKey( key );
+        return Response.status( 200 )
+                       .entity( toDTO( total, page, pageSize, ctl.getLogsByStoreKey( key, pageSize, startIndex ) ) )
+                       .build();
     }
 
     @GET
     @Path( "all" )
     @Produces( application_json )
-    public Response getAllChangelogs( final @QueryParam( "pageMax" ) int pageMax,
-                                      final @QueryParam( "pageStart" ) int pagetStart, @Context final UriInfo uriInfo )
+    public Response getAllChangelogs( final @QueryParam( "pageSize" ) int pageSize,
+                                      final @QueryParam( "page" ) int page, @Context final UriInfo uriInfo )
     {
-        return Response.status( 200 ).entity( ctl.getAllLogs( pageMax, pagetStart ) ).build();
+        int startIndex = page * pageSize;
+        final Integer total = ctl.sizeOfAllLogs();
+        return Response.status( 200 )
+                       .entity( toDTO( total, page, pageSize, ctl.getAllLogs( pageSize, startIndex ) ) )
+                       .build();
     }
 
+    private RepoChangelogDTO toDTO( Integer total, Integer curPage, Integer pageSize, List<RepositoryChangeLog> items )
+    {
+        return new RepoChangelogDTO().total( total ).curPage( curPage ).pageSize( pageSize ).items( items );
+    }
 }

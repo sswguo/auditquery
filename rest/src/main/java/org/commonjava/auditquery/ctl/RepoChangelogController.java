@@ -57,11 +57,22 @@ public class RepoChangelogController
 
     }
 
+    public Integer sizeOfLogsByStoreKey( String storeKey )
+    {
+        return queryFactory.from( RepositoryChangeLog.class )
+                           .having( "storeKey" )
+                           .eq( storeKey )
+                           .build()
+                           .getResultSize();
+    }
+
     public List<RepositoryChangeLog> getAllLogs( int max, int offset )
     {
-
         return queryFactory.from( RepositoryChangeLog.class ).maxResults( max ).startOffset( offset ).build().list();
+    }
 
+    public Integer sizeOfAllLogs(){
+        return queryFactory.from( RepositoryChangeLog.class ).build().getResultSize();
     }
 
 }
