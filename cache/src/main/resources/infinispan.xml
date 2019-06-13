@@ -26,10 +26,10 @@
             </indexing>
         </local-cache>
 
-        <local-cache name="repo-changelog" configuration="local-template">
+        <local-cache name="repo-change" configuration="local-template">
             <!-- just disable persistence now, will see if needs to be enabled future
             <persistence passivation="true">
-                <file-store shared="false" preload="false" fetch-state="false" path="${indy.data}/changelog"/>
+                <file-store shared="false" preload="false" fetch-state="false" path="${indy.data}/history"/>
             </persistence>
             -->
             <indexing index="LOCAL">
