@@ -3,7 +3,7 @@ import ReactTable from "react-table";
 
 import "react-table/react-table.css";
 
-export class ChangelogList extends React.Component{
+export class ChangeEventList extends React.Component{
     constructor(props){
        super(props);
        this.state = {
@@ -67,7 +67,7 @@ export class ChangelogList extends React.Component{
         // console.log(`total: ${total}, totalPage: ${totalPage}, pageSize:${pageSize}`)
         return (
           <React.Fragment>
-              <h4>Repository Change Log History</h4>
+              <h4>Repository Change History</h4>
               <ReactTable
                 manual
                 data={entries}
@@ -117,7 +117,7 @@ export class ChangelogList extends React.Component{
 }
 
 var fetchAll = (page, pageSize, resultHander, errorHandler) => {
-  fetch(`/api/rest/repository/changelog/all?pageSize=${pageSize}&page=${page}`)
+  fetch(`/api/rest/history/stores/all?pageSize=${pageSize}&page=${page}`)
       .then((response)=>response.json())
       .then(resultHander,errorHandler);
 };
