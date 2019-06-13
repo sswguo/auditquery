@@ -37,6 +37,7 @@
     <commonslang3Version>3.8</commonslang3Version>
     <jgroupsVersion>4.0.4.Final</jgroupsVersion>
     <commonsioVersion>2.6</commonsioVersion>
+    <swaggerVersion>1.5.9</swaggerVersion>
   </properties>
 
   <modules>
@@ -225,6 +226,24 @@
         <groupId>commons-io</groupId>
         <artifactId>commons-io</artifactId>
         <version>${commonsioVersion}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>io.swagger</groupId>
+        <artifactId>swagger-annotations</artifactId>
+        <version>${swaggerVersion}</version>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>io.swagger</groupId>
+        <artifactId>swagger-jaxrs</artifactId>
+        <version>${swaggerVersion}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>javax.ws.rs</groupId>
+            <artifactId>jsr311-api</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
     </dependencies>
   </dependencyManagement>

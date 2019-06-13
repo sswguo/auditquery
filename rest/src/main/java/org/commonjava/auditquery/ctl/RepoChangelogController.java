@@ -15,8 +15,8 @@
  */
 package org.commonjava.auditquery.ctl;
 
-import org.commonjava.auditquery.cache.RepoChangelogCache;
-import org.commonjava.auditquery.changelog.RepositoryChangeLog;
+import org.commonjava.auditquery.cache.RepoChangeCache;
+import org.commonjava.auditquery.history.ChangeEvent;
 import org.infinispan.Cache;
 import org.infinispan.query.Search;
 import org.infinispan.query.dsl.QueryFactory;
@@ -34,8 +34,8 @@ public class RepoChangelogController
     private final Logger logger = LoggerFactory.getLogger( this.getClass() );
 
     @Inject
-    @RepoChangelogCache
-    private Cache<String, RepositoryChangeLog> changeLogCache;
+    @RepoChangeCache
+    private Cache<String, ChangeEvent> changeLogCache;
 
     private QueryFactory queryFactory;
 
@@ -45,9 +45,9 @@ public class RepoChangelogController
         queryFactory = Search.getQueryFactory( changeLogCache );
     }
 
-    public List<RepositoryChangeLog> getLogsByStoreKey( String storeKey, int max, int offset )
+    public List<ChangeEvent> getLogsByStoreKey( String storeKey, int max, int offset )
     {
-        return queryFactory.from( RepositoryChangeLog.class )
+        return queryFactory.from( ChangeEvent.class )
                            .having( "storeKey" )
                            .eq( storeKey )
                            .maxResults( max )
@@ -59,20 +59,20 @@ public class RepoChangelogController
 
     public Integer sizeOfLogsByStoreKey( String storeKey )
     {
-        return queryFactory.from( RepositoryChangeLog.class )
+        return queryFactory.from( ChangeEvent.class )
                            .having( "storeKey" )
                            .eq( storeKey )
                            .build()
                            .getResultSize();
     }
 
-    public List<RepositoryChangeLog> getAllLogs( int max, int offset )
+    public List<ChangeEvent> getAllLogs( int max, int offset )
     {
-        return queryFactory.from( RepositoryChangeLog.class ).maxResults( max ).startOffset( offset ).build().list();
+        return queryFactory.from( ChangeEvent.class ).maxResults( max ).startOffset( offset ).build().list();
     }
 
     public Integer sizeOfAllLogs(){
-        return queryFactory.from( RepositoryChangeLog.class ).build().getResultSize();
+        return queryFactory.from( ChangeEvent.class ).build().getResultSize();
     }
 
 }

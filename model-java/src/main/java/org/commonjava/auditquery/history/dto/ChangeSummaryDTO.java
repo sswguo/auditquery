@@ -13,14 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.commonjava.auditquery.changelog.dto;
+package org.commonjava.auditquery.history.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.commonjava.auditquery.changelog.RepositoryChangeLog;
+import io.swagger.annotations.ApiModel;
+import org.commonjava.auditquery.history.ChangeSummary;
 
 import java.util.List;
 
-public class RepoChangelogDTO
+@ApiModel
+public class ChangeSummaryDTO
 {
     @JsonProperty
     private Integer pageSize;
@@ -32,26 +34,14 @@ public class RepoChangelogDTO
     private Integer curPage;
 
     @JsonProperty
-    private List<RepositoryChangeLog> items;
-
-    public RepoChangelogDTO()
-    {
-    }
-
-    public RepoChangelogDTO( Integer pageSize, Integer total, Integer curPage, List<RepositoryChangeLog> items )
-    {
-        this.pageSize = pageSize;
-        this.total = total;
-        this.curPage = curPage;
-        this.items = items;
-    }
+    private List<ChangeSummary> items;
 
     public Integer getPageSize()
     {
         return pageSize;
     }
 
-    public RepoChangelogDTO pageSize( Integer pageSize )
+    public ChangeSummaryDTO pageSize( Integer pageSize )
     {
         this.pageSize = pageSize;
         return this;
@@ -62,7 +52,7 @@ public class RepoChangelogDTO
         return total;
     }
 
-    public RepoChangelogDTO total( Integer total )
+    public ChangeSummaryDTO total( Integer total )
     {
         this.total = total;
         return this;
@@ -73,20 +63,21 @@ public class RepoChangelogDTO
         return curPage;
     }
 
-    public RepoChangelogDTO curPage( Integer curPage )
+    public ChangeSummaryDTO curPage( Integer curPage )
     {
         this.curPage = curPage;
         return this;
     }
 
-    public List<RepositoryChangeLog> getItems()
+    public List<ChangeSummary> getItems()
     {
         return items;
     }
 
-    public RepoChangelogDTO items( List<RepositoryChangeLog> items )
+    public ChangeSummaryDTO items( List<ChangeSummary> items )
     {
         this.items = items;
         return this;
     }
+
 }

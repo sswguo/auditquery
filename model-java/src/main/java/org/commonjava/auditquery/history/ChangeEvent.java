@@ -13,9 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.commonjava.auditquery.changelog;
+package org.commonjava.auditquery.history;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.search.annotations.Analyze;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Index;
@@ -31,36 +33,59 @@ import java.util.Date;
 
 @Entity
 @Indexed
-public class RepositoryChangeLog
+@ApiModel
+public class ChangeEvent
         implements Serializable, Externalizable
 {
     @JsonProperty
+    @ApiModelProperty( required = true, dataType = "string", value = "The id for change event" )
+    private String eventId;
+
+    @JsonProperty
+    @ApiModelProperty( required = true, dataType = "string",
+                       value = "Serialized store key, of the form: '[hosted|group|remote]:name'" )
     @Field( index = Index.YES, analyze = Analyze.NO )
     private String storeKey;
 
     @JsonProperty
+    @ApiModelProperty( required = true, dataType = "java.util.Date", value = "Timestamp for this changing" )
     @Field( index = Index.YES, analyze = Analyze.NO )
     private Date changeTime;
 
     @JsonProperty
+    @ApiModelProperty( required = true, dataType = "string", value = "The version of this change" )
     @Field( index = Index.YES, analyze = Analyze.NO )
     private String version;
 
     @JsonProperty
+    @ApiModelProperty( required = true, dataType = "string", value = "Summary of this change" )
     @Field( index = Index.YES, analyze = Analyze.NO )
     private String summary;
 
     @JsonProperty
+    @ApiModelProperty( required = true, dataType = "string", value = "The type of this change [delete|update|create]" )
     @Field( index = Index.YES, analyze = Analyze.NO )
-    private RepoChangeType changeType;
+    private ChangeType changeType;
 
     @JsonProperty
+    @ApiModelProperty( required = true, dataType = "string", value = "User who did this change" )
     @Field( index = Index.YES, analyze = Analyze.NO )
     private String user;
 
     @JsonProperty
+    @ApiModelProperty( required = true, dataType = "string", value = "The diff content of this change between old and new" )
     @Field( index = Index.YES, analyze = Analyze.NO )
     private String diffContent;
+
+    public String getEventId()
+    {
+        return eventId;
+    }
+
+    public void setEventId( String eventId )
+    {
+        this.eventId = eventId;
+    }
 
     public String getStoreKey()
     {
@@ -102,12 +127,12 @@ public class RepositoryChangeLog
         this.summary = summary;
     }
 
-    public RepoChangeType getChangeType()
+    public ChangeType getChangeType()
     {
         return changeType;
     }
 
-    public void setChangeType( RepoChangeType changeType )
+    public void setChangeType( ChangeType changeType )
     {
         this.changeType = changeType;
     }
@@ -162,7 +187,7 @@ public class RepositoryChangeLog
         {
             return false;
         }
-        final RepositoryChangeLog other = (RepositoryChangeLog) obj;
+        final ChangeEvent other = (ChangeEvent) obj;
         if ( storeKey == null )
         {
             if ( other.storeKey != null )
@@ -257,7 +282,7 @@ public class RepositoryChangeLog
         this.changeTime = (Date) in.readObject();
         this.version = (String) in.readObject();
         this.summary = (String) in.readObject();
-        this.changeType = (RepoChangeType) in.readObject();
+        this.changeType = (ChangeType) in.readObject();
         this.user = (String) in.readObject();
         this.diffContent = (String) in.readObject();
     }

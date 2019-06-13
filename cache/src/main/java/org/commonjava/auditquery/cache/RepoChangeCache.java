@@ -14,5 +14,6 @@ import javax.inject.Qualifier;
 @Target({ ElementType.FIELD, ElementType.PARAMETER, ElementType.METHOD})
 @Retention( RetentionPolicy.RUNTIME)
 @Documented
-public @interface RepoChangelogCache {
+public @interface RepoChangeCache
+{
 }

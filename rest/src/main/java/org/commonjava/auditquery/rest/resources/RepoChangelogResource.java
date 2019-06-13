@@ -15,9 +15,9 @@
  */
 package org.commonjava.auditquery.rest.resources;
 
-import org.commonjava.auditquery.changelog.RepositoryChangeLog;
-import org.commonjava.auditquery.changelog.dto.RepoChangelogDTO;
 import org.commonjava.auditquery.ctl.RepoChangelogController;
+import org.commonjava.auditquery.history.ChangeEvent;
+import org.commonjava.auditquery.history.dto.ChangeEventDTO;
 import org.commonjava.propulsor.deploy.resteasy.RestResources;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -72,8 +72,8 @@ public class RepoChangelogResource
                        .build();
     }
 
-    private RepoChangelogDTO toDTO( Integer total, Integer curPage, Integer pageSize, List<RepositoryChangeLog> items )
+    private ChangeEventDTO toDTO( Integer total, Integer curPage, Integer pageSize, List<ChangeEvent> items )
     {
-        return new RepoChangelogDTO().total( total ).curPage( curPage ).pageSize( pageSize ).items( items );
+        return new ChangeEventDTO().total( total ).curPage( curPage ).pageSize( pageSize ).items( items );
     }
 }
