@@ -78,7 +78,7 @@ export class ChangeSummaryList extends React.Component{
                   {
                     "Header": "Event Id",
                     "accessor": "eventId",
-                    "Cell": e => <Link to={`/brwose/history/change/event/${e.value}`}>{e.value}</Link>
+                    "Cell": e => <Link to={`/browse/history/change/event/${e.value}`}>{e.value}</Link>
                   },                  
                   {
                     "Header": "Change Time",
