@@ -69,7 +69,7 @@ export class ChangeSummaryStats extends React.Component{
                     "accessor": "storeKey",
                     "Cell": s => {
                       let parts = s.value.split(":");
-                      return <Link to={`/brwose/history/change/summary/by-store/${parts[0]}/${parts[1]}/${parts[2]}`}>{s.value}</Link>;
+                      return <Link to={`/browse/history/change/summary/by-store/${parts[0]}/${parts[1]}/${parts[2]}`}>{s.value}</Link>;
                     }
                   },
                   {
