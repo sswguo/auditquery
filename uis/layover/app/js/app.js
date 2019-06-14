@@ -4,7 +4,9 @@ import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import TrackingIDForm from "./components/TrackingIDForm.js";
 import { TrackingSummary } from "./components/TrackingSummary.js";
 import { TrackingContentEntry } from "./components/TrackingContentEntry.js";
-import {ChangelogList} from "./components/changelog/ChangelogList.js";
+import {ChangeSummaryStats} from "./components/history/ChangeSummaryStats.js";
+import {ChangeSummaryList} from "./components/history/ChangeSummaryList.js";
+import {ChangeEventView} from "./components/history/ChangeEventView.js";
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const App = () => (
@@ -16,7 +18,9 @@ const App = () => (
         <Route path="/browse/history/content/tracking/:trackingID/" component={TrackingSummaryDTO} />
         <Route path="/browse/history/content/tracking/:trackingID/:type(upload|download)" component={TrackingContentEntryDTO}/>
 
-        <Route path="/brwose/repository/changelog/" component={ChlogList} />
+        <Route path="/browse/history/change/summary/stats" component={ChgSumStats} />
+        <Route path="/browse/history/change/summary/by-store/:packageType/:type/:name" component={ChgSumList} />
+        <Route path="/browse/history/change/event/:eventId" component={ChgEvt} />
 
       </div>
    </Router>
@@ -30,7 +34,7 @@ const Header = () => (
         <li className="nav-item nav-link">
           <Link to="/browse/history/content/tracking/">Tracking Records</Link>
           { " | " }
-          <Link to="/brwose/repository/changelog/">Repository Change History</Link>
+          <Link to="/browse/history/change/summary/stats">Repository Change History States</Link>
         </li>
       </div>
     </div>
@@ -45,8 +49,16 @@ const TrackingContentEntryDTO = ({ match }) => (
     <TrackingContentEntry trackingID={match.params.trackingID} type={match.params.type} location={location}/>
 );
 
-const ChlogList = ({ match }) => (
-  <ChangelogList />
+const ChgSumStats = ({ match }) => (
+  <ChangeSummaryStats />
+)
+
+const ChgSumList = ({ match }) => (
+  <ChangeSummaryList packageType={match.params.packageType} type={match.params.type} name={match.params.name}/>
+)
+
+const ChgEvt = ({ match }) => (
+  <ChangeEventView eventId={match.params.eventId}/>
 )
 
 ReactDOM.render(
