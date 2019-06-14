@@ -18,9 +18,9 @@ const App = () => (
         <Route path="/browse/history/content/tracking/:trackingID/" component={TrackingSummaryDTO} />
         <Route path="/browse/history/content/tracking/:trackingID/:type(upload|download)" component={TrackingContentEntryDTO}/>
 
-        <Route path="/brwose/history/change/summary/stats" component={ChgSumStats} />
-        <Route path="/brwose/history/change/summary/by-store/:packageType/:type/:name" component={ChgSumList} />
-        <Route path="/brwose/history/change/event/:eventId" component={ChgEvt} />
+        <Route path="/browse/history/change/summary/stats" component={ChgSumStats} />
+        <Route path="/browse/history/change/summary/by-store/:packageType/:type/:name" component={ChgSumList} />
+        <Route path="/browse/history/change/event/:eventId" component={ChgEvt} />
 
       </div>
    </Router>
@@ -34,7 +34,7 @@ const Header = () => (
         <li className="nav-item nav-link">
           <Link to="/browse/history/content/tracking/">Tracking Records</Link>
           { " | " }
-          <Link to="/brwose/history/change/summary/stats">Repository Change History States</Link>
+          <Link to="/browse/history/change/summary/stats">Repository Change History States</Link>
         </li>
       </div>
     </div>
