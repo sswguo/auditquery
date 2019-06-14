@@ -6,4 +6,5 @@ target
 uis/layover/node_modules
 uis/layover/node
 uis/layover/yarn-*
+uis/layover/mock/data/list/*
 **/dist

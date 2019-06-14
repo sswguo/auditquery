@@ -1,0 +1,35 @@
+import * as path from "path";
+import {Request, Response} from "express";
+import express from "express";
+import compression from "compression";
+import SummaryStatsService from "./rest/SummaryStatsService";
+import SummaryService from "./rest/SummaryService";
+import ChangeService from "./rest/ChangeService";
+
+const app = express();
+app.use(compression());
+app.listen(4000, () => {
+  console.log("Example app listening at http://localhost:4000");
+});
+app.use(express.static('dist'));
+
+const projectRoot = '/home/gli/workspaces/js/react/auditquery-ui';
+const APP_ROOT="/#";
+const indexHtml=path.join(projectRoot+'/index.html');
+const apiRoot = "/api/rest/history/stores";
+
+// For direct url bar addressing, will send home page directly for client router rendering
+app.get([APP_ROOT, `${APP_ROOT}/*`, '/'],(req:Request, res:Response) => {
+    res.sendFile(indexHtml);
+});
+
+var sumStatService = new SummaryStatsService();
+app.get(apiRoot+sumStatService.path, sumStatService.handler);
+
+var summaryService = new SummaryService();
+app.get(apiRoot+summaryService.path, summaryService.handler);
+
+var changeService = new ChangeService();
+app.get(apiRoot+changeService.pathAll, changeService.allHandler);
+app.get(apiRoot+changeService.pathKey, changeService.keyHandler);
+app.get(apiRoot+changeService.eventPath, changeService.eventHandler);
