@@ -54,7 +54,7 @@ public class RepoChangeResource
     @Produces( application_json )
     public Response getSummariesByPattern( final @QueryParam( "lastUpdate" ) String lastUpdate,
                                            final @QueryParam( "page" ) Integer page,
-                                           final @QueryParam( "size" ) Integer pageSize,
+                                           final @QueryParam( "pageSize" ) Integer pageSize,
                                            final @QueryParam( "pattern" ) String pattern,
                                            @Context final UriInfo uriInfo )
     {
@@ -74,7 +74,7 @@ public class RepoChangeResource
                                             final @PathParam( "type" ) String type,
                                             final @PathParam( "name" ) String name,
                                             final @QueryParam( "lastUpdate" ) String lastUpdate,
-                                            final @QueryParam( "size" ) int pageSize,
+                                            final @QueryParam( "pageSize" ) int pageSize,
                                             final @QueryParam( "page" ) int page, @Context final UriInfo uriInfo )
     {
         String key = String.format( "%s:%s:%s", packageType, type, name );
