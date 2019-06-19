@@ -61,7 +61,7 @@ public class RepoChangeResource
         List<ChangeSummary> summaries = null;
         int startIndex = page * pageSize;
         //TODO lastUpdate support not implement yet
-        List<ChangeEvent> events = ctl.getEventsByPattern( pattern, page, pageSize );
+        List<ChangeEvent> events = ctl.getEventsByPattern( pattern, pageSize, startIndex );
         return Response.status( 200 )
                        .entity( collectSummaryStats( events ) )
                        .build();

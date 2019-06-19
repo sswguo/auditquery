@@ -65,17 +65,24 @@ public class RepoChangeEventController
 
     public List<ChangeEvent> getEventsByPattern( String pattern, int max, int offset )
     {
+        List<ChangeEvent> events;
         if ( StringUtils.isBlank( pattern ) )
         {
-            return queryFactory.from( ChangeEvent.class ).startOffset( offset ).maxResults( max ).build().list();
+            events = queryFactory.from( ChangeEvent.class ).startOffset( offset ).maxResults( max ).build().list();
         }
-        return queryFactory.from( ChangeEvent.class )
-                           .having( "storeKey" )
-                           .like( pattern )
-                           .startOffset( offset )
-                           .maxResults( max )
-                           .build()
-                           .list();
+        else
+        {
+            events = queryFactory.from( ChangeEvent.class )
+                                 .having( "storeKey" )
+                                 .like( pattern )
+                                 .startOffset( offset )
+                                 .maxResults( max )
+                                 .build()
+                                 .list();
+        }
+
+        logger.debug( "Get events size: {}", events.size() );
+        return events;
     }
 
     public Integer sizeOfEventsByPattern( String pattern )
