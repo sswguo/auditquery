@@ -26,7 +26,7 @@
 
   <groupId>org.commonjava.auditquery</groupId>
   <artifactId>auditquery-parent</artifactId>
-  <version>0.13.0</version>
+  <version>0.13.1-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>Audit Query Service</name>
@@ -36,7 +36,7 @@
     <connection>scm:git:https://github.com/Commonjava/auditquery.git</connection>
     <developerConnection>scm:git:git@github.com:Commonjava/auditquery.git</developerConnection>
     <url>http://github.com/Commonjava/auditquery</url>
-    <tag>auditquery-parent-0.13.0</tag>
+    <tag>HEAD</tag>
   </scm>
 
   <properties>

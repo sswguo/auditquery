@@ -21,7 +21,7 @@
     <parent>
         <groupId>org.commonjava.auditquery</groupId>
         <artifactId>auditquery-parent</artifactId>
-        <version>0.13.0</version>
+        <version>0.13.1-SNAPSHOT</version>
     </parent>
 
     <name>Audit Query Cache</name>
