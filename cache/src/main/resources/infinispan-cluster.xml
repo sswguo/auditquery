@@ -8,7 +8,7 @@
         <stack-file name="external-file" path="jgroups-tcp.xml" />
     </jgroups>
 
-    <cache-container default-cache="event-audit" name="auditQueryClusterCacheManager">
+    <cache-container name="auditQueryClusterCacheManager">
         <transport stack="external-file" cluster="default"/>
 
         <replicated-cache name="event-audit">
@@ -16,6 +16,8 @@
                 <property name="default.directory_provider">local-heap</property>
             </indexing>
         </replicated-cache>
+
+        <replicated-cache name="repo-change" />
 
     </cache-container>
 
