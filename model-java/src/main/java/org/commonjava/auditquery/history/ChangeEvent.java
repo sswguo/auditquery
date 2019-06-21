@@ -30,6 +30,7 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Objects;
 
 @Entity
 @Indexed
@@ -160,16 +161,7 @@ public class ChangeEvent
     @Override
     public int hashCode()
     {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ( ( storeKey == null ) ? 1 : storeKey.hashCode() );
-        result = prime * result + ( ( changeTime == null ) ? 2 : changeTime.hashCode() );
-        result = prime * result + ( ( version == null ) ? 3 : version.hashCode() );
-        result = prime * result + ( ( summary == null ) ? 5 : summary.hashCode() );
-        result = prime * result + ( ( changeType == null ) ? 8 : changeType.hashCode() );
-        result = prime * result + ( ( user == null ) ? 13 : user.hashCode() );
-        result = prime * result + ( ( diffContent == null ) ? 21 : diffContent.hashCode() );
-        return result;
+        return Objects.hash( storeKey, changeTime, version, summary, changeType, user, diffContent );
     }
 
     @Override
@@ -188,96 +180,19 @@ public class ChangeEvent
             return false;
         }
         final ChangeEvent other = (ChangeEvent) obj;
-        if ( storeKey == null )
-        {
-            if ( other.storeKey != null )
-            {
-                return false;
-            }
-        }
-        else if ( !storeKey.equals( other.storeKey ) )
-        {
-            return false;
-        }
-        if ( changeTime == null )
-        {
-            if ( other.changeTime != null )
-            {
-                return false;
-            }
-        }
-        else if ( !changeTime.equals( other.changeTime ) )
-        {
-            return false;
-        }
 
-        if ( version == null )
-        {
-            if ( other.version != null )
-            {
-                return false;
-            }
-        }
-        else if ( !version.equals( other.version ) )
-        {
-            return false;
-        }
+        return Objects.equals( storeKey, other.storeKey ) && Objects.equals( changeTime, other.changeTime )
+                && Objects.equals( version, other.version ) && Objects.equals( summary, other.summary )
+                && Objects.equals( changeType, other.changeType ) && Objects.equals( user, other.user )
+                && Objects.equals( diffContent, other.diffContent );
 
-        if ( summary == null )
-        {
-            if ( other.summary != null )
-            {
-                return false;
-            }
-        }
-        else if ( !summary.equals( other.summary ) )
-        {
-            return false;
-        }
-
-        if ( changeType == null )
-        {
-            if ( other.changeType != null )
-            {
-                return false;
-            }
-        }
-        else if ( !changeType.equals( other.changeType ) )
-        {
-            return false;
-        }
-
-        if ( user == null )
-        {
-            if ( other.user != null )
-            {
-                return false;
-            }
-        }
-        else if ( !user.equals( other.user ) )
-        {
-            return false;
-        }
-
-        if ( diffContent == null )
-        {
-            if ( other.diffContent != null )
-            {
-                return false;
-            }
-        }
-        else if ( !diffContent.equals( other.diffContent ) )
-        {
-            return false;
-        }
-
-        return true;
     }
 
     @Override
     public void readExternal( ObjectInput in )
             throws IOException, ClassNotFoundException
     {
+        this.eventId = (String) in.readObject();
         this.storeKey = (String) in.readObject();
         this.changeTime = (Date) in.readObject();
         this.version = (String) in.readObject();
@@ -291,6 +206,7 @@ public class ChangeEvent
     public void writeExternal( ObjectOutput out )
             throws IOException
     {
+        out.writeObject( this.eventId );
         out.writeObject( this.storeKey );
         out.writeObject( this.changeTime );
         out.writeObject( this.version );
