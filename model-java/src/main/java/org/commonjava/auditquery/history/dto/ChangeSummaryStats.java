@@ -27,13 +27,13 @@ public class ChangeSummaryStats
     private String storeKey;
 
     @JsonProperty
-    private Integer creates;
+    private Integer creates = 0;
 
     @JsonProperty
-    private Integer updates;
+    private Integer updates = 0;
 
     @JsonProperty
-    private Integer deletes;
+    private Integer deletes = 0;
 
     @JsonProperty
     private Date lastUpdate;
