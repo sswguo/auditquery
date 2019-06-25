@@ -29,7 +29,7 @@ import javax.inject.Inject;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-
+import java.util.Arrays;
 
 /**
  * This is a temporary implementation and it will be replaced by the one in propulsor
@@ -79,7 +79,10 @@ public class CacheProducer
                 try ( FileInputStream ispnClusterStream = FileUtils.openInputStream( ispnClusterConf ) )
                 {
                     clusterCacheManager = new DefaultCacheManager( ispnClusterStream );
-                    clusterCacheManager.startCaches( String.join( ",", clusterCacheManager.getCacheNames() ) );
+
+                    String[] cacheNames = clusterCacheManager.getCacheNames().toArray( new String[]{} );
+                    logger.info( "Starting cluster caches to make sure they existed: {}", Arrays.toString( cacheNames ) );
+                    clusterCacheManager.startCaches( cacheNames );
                 }
                 catch ( IOException e )
                 {
@@ -95,7 +98,9 @@ public class CacheProducer
                 cacheManager = new DefaultCacheManager( ISPN_XML );
                 clusterCacheManager = new DefaultCacheManager( ISPN_CLUSTER_XML );
 
-                clusterCacheManager.startCaches( String.join( ",", clusterCacheManager.getCacheNames() ) );
+                String[] cacheNames = clusterCacheManager.getCacheNames().toArray( new String[]{} );
+                logger.info( "Starting cluster caches to make sure they existed: {}", Arrays.toString( cacheNames ) );
+                clusterCacheManager.startCaches( cacheNames );
             }
             catch ( IOException e )
             {
