@@ -44,6 +44,7 @@ const genFakeData = ()=>{
       }
       let changeTime = new Date();
       let summary = `A simple change summary for ${repoKey} with a ${changeType} operation at ${changeTime}`;
+      let repoKeySlice = repoKey.split(":");      
       let e = {
         eventId: idNum,
         storeKey: repoKey,
@@ -52,7 +53,7 @@ const genFakeData = ()=>{
         summary: summary,
         user: `user${i}`,
         version: `${j}.${i}`,
-        diffContent: "A simple diff content"
+        diffContent: `--- a/central.json +++ b/central.json @@ -1,1 +1,27 @@ -null +{ + "type" : "${repoKeySlice[1]}", + "key" : "${repoKey}", + "disabled" : false, + "host" : "repo.maven.apache.org", + "port" : 80, + "packageType" : "${repoKeySlice[0]}", + "name" : "${repoKeySlice[2]}", + "type" : "${repoKeySlice[1]}", + "disable_timeout" : 0, + "path_style" : "plain", + "authoritative_index" : false, + "allow_snapshots" : false, + "allow_releases" : true, + "url" : "http://repo.maven.apache.org/maven2/", + "timeout_seconds" : 0, + "max_connections" : 30, + "ignore_hostname_verification" : false, + "nfc_timeout_seconds" : 0, + "is_passthrough" : false, + "cache_timeout_seconds" : 86400, + "metadata_timeout_seconds" : 0, + "proxy_port" : 0, + "prefetch_priority" : 0, + "prefetch_rescan" : false, + "prefetch_listing_type" : "html" +}`
       }
       events.push(e);      
     }

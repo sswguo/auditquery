@@ -60,7 +60,7 @@ export class ChangeEventView extends React.Component{
             <DisplayBlock id="changeType" label="Change type" content={event.changeType} />
             <DisplayBlock id="user" label="User" content={event.user} />
             <DisplayBlock id="version" label="Version" content={event.version} />
-            <DisplayBlock id="diff" label="Diff" content={event.diffContent} />
+            <DisplayBlock id="diff" label="Diff" content={event.diffContent} code="true" />
           </React.Fragment>
          );
       }
@@ -69,10 +69,13 @@ export class ChangeEventView extends React.Component{
 
 const DisplayBlock = (props)=>{
   const [rowClass, labelClass, valueClass, spanClass] = ["form-group row", "col-sm-1 col-form-label", "col-sm-10", "form-control-plaintext"];
+  let codeBlock = props.code?<code>{props.content}</code>:props.content;
   return <div className={rowClass}>
     <label htmlFor={props.id} className={labelClass}>{props.label}:</label>
     <div className={valueClass}>
-    <span id="diff" className={spanClass}>{props.content}</span>
+    <span id={props.id} className={spanClass}>
+    { codeBlock }
+    </span>
     </div>
   </div>;
 }
