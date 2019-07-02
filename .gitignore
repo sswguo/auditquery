@@ -8,3 +8,5 @@ uis/layover/node
 uis/layover/yarn-*
 uis/layover/mock/data/list/*
 **/dist
+**/.vscode
+**/.classpath
