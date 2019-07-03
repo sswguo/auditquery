@@ -49,6 +49,9 @@ public class RepoChangeResource
     @Inject
     private RepoChangeEventController ctl;
 
+    private final int DEFAULT_PAGE = 0;
+    private final int DEFAULT_PAGE_SIZE = 25;
+
     @GET
     @Path( "/summary/stats" )
     @Produces( application_json )
@@ -59,9 +62,10 @@ public class RepoChangeResource
                                            @Context final UriInfo uriInfo )
     {
         List<ChangeSummary> summaries = null;
-        int startIndex = page * pageSize;
+        int startIndex = startIndex( page, pageSize );
+        int curPageSize = pageSize == null ? DEFAULT_PAGE_SIZE : pageSize;
         //TODO lastUpdate support not implement yet
-        List<ChangeEvent> events = ctl.getEventsByPattern( pattern, pageSize, startIndex );
+        List<ChangeEvent> events = ctl.getEventsByPattern( pattern, curPageSize, startIndex );
         return Response.status( 200 )
                        .entity( collectSummaryStats( events ) )
                        .build();
@@ -74,16 +78,17 @@ public class RepoChangeResource
                                             final @PathParam( "type" ) String type,
                                             final @PathParam( "name" ) String name,
                                             final @QueryParam( "lastUpdate" ) String lastUpdate,
-                                            final @QueryParam( "pageSize" ) int pageSize,
-                                            final @QueryParam( "page" ) int page, @Context final UriInfo uriInfo )
+                                            final @QueryParam( "pageSize" ) Integer pageSize,
+                                            final @QueryParam( "page" ) Integer page, @Context final UriInfo uriInfo )
     {
         String key = String.format( "%s:%s:%s", packageType, type, name );
-        int startIndex = page * pageSize;
+        int startIndex = startIndex( page, pageSize );
+        int curPageSize = pageSize == null ? DEFAULT_PAGE_SIZE : pageSize;
         final Integer total = ctl.sizeOfEventsByStoreKey( key );
         //TODO lastUpdate support not implement yet
         return Response.status( 200 )
                        .entity( toSummaryDTO( total, page, pageSize,
-                                              ctl.getEventsByStoreKey( key, pageSize, startIndex ) ) )
+                                              ctl.getEventsByStoreKey( key, curPageSize, startIndex ) ) )
                        .build();
     }
 
@@ -147,5 +152,12 @@ public class RepoChangeResource
         } );
 
         return new ArrayList<>( stats.values() );
+    }
+
+    private int startIndex( final Integer page, final Integer pageSize )
+    {
+        int curPage = page == null ? DEFAULT_PAGE : page;
+        int curPageSize = pageSize == null ? DEFAULT_PAGE_SIZE : pageSize;
+        return curPage * curPageSize;
     }
 }
