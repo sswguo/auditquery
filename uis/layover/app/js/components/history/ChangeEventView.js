@@ -58,6 +58,7 @@ export class ChangeEventView extends React.Component{
             <DisplayBlock id="storeKey" label="Store key" content={event.storeKey} />
             <DisplayBlock id="changeTime" label="Change time" content={event.changeTime} />
             <DisplayBlock id="changeType" label="Change type" content={event.changeType} />
+            <DisplayBlock id="summary" label="Summary" content={event.summary} />
             <DisplayBlock id="user" label="User" content={event.user} />
             <DisplayBlock id="version" label="Version" content={event.version} />
             <DisplayBlock id="diff" label="Diff" content={event.diffContent} code="true" />
