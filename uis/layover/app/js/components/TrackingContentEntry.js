@@ -20,47 +20,45 @@ import "react-table/react-table.css";
 
 export class TrackingContentEntry extends React.Component{
     constructor(props){
-       super(props);
-       console.log(this.props.location.search);
-               let queryParams = new URLSearchParams(this.props.location.search);
-       this.state = {
-         error: null,
-         entries: [],
-         isLoaded: false,
-         pageSkip: queryParams.get("p"),
-         pageCount: queryParams.get("c")
-       };
+        super(props);
+        let queryParams = new URLSearchParams(this.props.location.search);
+        this.state = {
+            error: null,
+            entries: [],
+            isLoaded: false,
+            page: parseInt(queryParams.get("p")),
+            pageCount: parseInt(queryParams.get("c"))
+        };
     }
 
     fetchData(){
-       this.parseQuery();
-       fetch(`/api/rest/history/content/tracking/
-            ${this.props.trackingID}/entries?type=${this.props.type}&skip=${this.state.pageSkip}&count=${this.state.pageCount}`)
-           .then(function(response) {
-              return response.json();
-           })
-           .then(
-              (result) => {
-                 this.setState({
-                    isLoaded: true,
-                    entries: result
-                 });
-              },
-              (error) => {
-                 this.setState({
-                   isLoaded: true,
-                   error
-                 });
-              }
-           )
-    }
 
-    parseQuery(){
-        let queryParams = new URLSearchParams(this.props.location.search);
-        this.setState({
-            pageSkip: queryParams.get("p"),
-            pageCount: queryParams.get("c")
-        });
+        const { location, trackingID, type } = this.props;
+
+        let queryParams = new URLSearchParams(location.search);
+        let p = parseInt(queryParams.get("p"));
+        let c = parseInt(queryParams.get("c"));
+
+        fetch(`/api/rest/history/content/tracking/
+            ${trackingID}/entries?type=${type}&skip=${p}&count=${c}`)
+            .then(function(response) {
+                return response.json();
+            })
+            .then(
+                (result) => {
+                    this.setState({
+                        isLoaded: true,
+                        entries: result.items,
+                        pages: Math.ceil(result.total/c)
+                    });
+                },
+                (error) => {
+                    this.setState({
+                        isLoaded: true,
+                        error
+                    });
+                }
+           )
     }
 
     componentDidMount(){
@@ -68,51 +66,67 @@ export class TrackingContentEntry extends React.Component{
     }
 
     componentDidUpdate(prevProps) {
-      if (this.props.type !== prevProps.type) {
+        if (this.props.type !== prevProps.type) {
+            this.fetchData();
+        }
+    }
+
+    handlePageChange(pageIndex, pageCount) {
+
+        const { trackingID, type, history } = this.props;
+
+        this.setState({
+            page: pageIndex,
+            pageCount: pageCount,
+            isLoaded: false
+        });
+
+        history.replace(`/browse/history/content/tracking/${trackingID}/${type}?p=${pageIndex}&c=${pageCount}`);
         this.fetchData();
-      }
     }
 
     render(){
-      const { isLoaded, entries } = this.state;
+        const { isLoaded, entries, page, pages, pageCount } = this.state;
 
-      const columns = [{
-          Header: 'Store Key',
-          accessor: 'storeKey'
-      }, {
-         Header: 'Checksum',
-         accessor: 'sha256'
-      },{
-          Header: 'Access Channel',
-          accessor: 'accessChannel'
-      }, {
-         Header: 'Path',
-         accessor: 'path'
-      }, {
-         Header: 'Origin URL',
-         accessor: 'originUrl'
-      }, {
-         Header: 'Local URL',
-         accessor: 'localUrl'
-      }];
+        const columns = [{
+            Header: 'Store Key',
+            accessor: 'storeKey'
+        }, {
+            Header: 'Checksum',
+            accessor: 'sha256'
+        }, {
+            Header: 'Path',
+            accessor: 'path'
+        }, {
+            Header: 'Origin URL',
+            accessor: 'originUrl'
+        }, {
+            Header: 'Local URL',
+            accessor: 'localUrl'
+        }];
 
-
-      if (!isLoaded) {
-         return <div>Loading...</div>;
-      } else {
-         return (
-            <React.Fragment>
-               <h4>Tracking Content Entry</h4>
-               <ReactTable
-                   data={entries}
-                   columns={columns}
-                   onPageSizeChange={(pageSize, pageIndex) => {
-                        console.log(pageIndex + "|" + pageSize)
-                        // TODO update location or just refresh the table
-                   }}
-               />
-            </React.Fragment>
-         );
-      }
+        if (!isLoaded) {
+            return <div>Loading...</div>;
+        } else {
+            return (
+                <React.Fragment>
+                    <h4>Tracking Content Entry</h4>
+                    <ReactTable
+                        manual
+                        minRows={5}
+                        data={entries}
+                        columns={columns}
+                        pages={pages}
+                        page={page}
+                        onPageSizeChange={(pageSize, pageIndex) => {
+                            this.handlePageChange(pageIndex, pageSize)
+                        }}
+                        onPageChange={(pageIndex) => {
+                            this.handlePageChange(pageIndex, pageCount)
+                        }}
+                    />
+                </React.Fragment>
+            );
+        }
     };
 }
