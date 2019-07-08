@@ -21,7 +21,7 @@
     <parent>
         <groupId>org.commonjava.auditquery</groupId>
         <artifactId>auditquery-parent</artifactId>
-        <version>0.13.1-SNAPSHOT</version>
+        <version>0.13.1</version>
     </parent>
 
     <artifactId>auditquery-deployments-parent</artifactId>
