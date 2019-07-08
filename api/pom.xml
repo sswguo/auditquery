@@ -20,7 +20,7 @@
     <parent>
         <artifactId>auditquery-parent</artifactId>
         <groupId>org.commonjava.auditquery</groupId>
-        <version>0.13.1-SNAPSHOT</version>
+        <version>0.13.2-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
