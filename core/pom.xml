@@ -22,7 +22,7 @@
     <parent>
         <groupId>org.commonjava.auditquery</groupId>
         <artifactId>auditquery-parent</artifactId>
-        <version>0.13.1</version>
+        <version>0.13.2-SNAPSHOT</version>
     </parent>
 
     <name>Audit Query Service Core</name>
