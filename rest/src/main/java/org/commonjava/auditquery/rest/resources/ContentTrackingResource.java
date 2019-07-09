@@ -15,6 +15,7 @@
  */
 package org.commonjava.auditquery.rest.resources;
 
+import org.commonjava.auditquery.common.PaginatedResult;
 import org.commonjava.auditquery.ctl.ContentTrackingController;
 import org.commonjava.auditquery.rest.exception.AuditQueryWebException;
 import org.commonjava.auditquery.tracking.dto.TrackedContentEntryDTO;
@@ -29,6 +30,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Response;
 import java.util.Collection;
 
 import static org.commonjava.propulsor.deploy.undertow.util.StandardApplicationContent.application_json;
@@ -64,10 +66,10 @@ public class ContentTrackingResource
 
     @GET
     @Path( "/history/content/tracking/{tracking-id}/entries" )
-    public Collection<TrackedContentEntryDTO> listEntries( @PathParam( "tracking-id" ) String trackingID,
-                                                           @QueryParam( "type" ) String type,
-                                                           @QueryParam( "skip" ) int skip,
-                                                           @QueryParam( "count" ) int count )
+    public Response listEntries( @PathParam( "tracking-id" ) String trackingID,
+                                 @QueryParam( "type" ) String type,
+                                 @QueryParam( "skip" ) int skip,
+                                 @QueryParam( "count" ) int count )
                     throws AuditQueryWebException
     {
         Collection<TrackedContentEntryDTO> trackedContentEntryDTOS;
@@ -79,7 +81,19 @@ public class ContentTrackingResource
         {
             throw new AuditQueryWebException( e );
         }
-
-        return trackedContentEntryDTOS;
+        TrackingSummaryDTO trackingSummaryDTO;
+        try
+        {
+            trackingSummaryDTO = trackingController.getTrackingSummaryByID( trackingID );
+        }
+        catch ( Exception e )
+        {
+            throw new AuditQueryWebException( e );
+        }
+        PaginatedResult<TrackedContentEntryDTO> result =
+                        new PaginatedResult<TrackedContentEntryDTO>()
+                                        .items( trackedContentEntryDTOS )
+                                        .total( type.equals( "download" ) ? trackingSummaryDTO.getDownloadCount() : trackingSummaryDTO.getUploadCount() );
+        return Response.status( Response.Status.OK ).entity( result ).build();
     }
 }

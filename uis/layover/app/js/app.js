@@ -23,6 +23,7 @@ import {ChangeSummaryStats} from "./components/history/ChangeSummaryStats.js";
 import {ChangeSummaryList} from "./components/history/ChangeSummaryList.js";
 import {ChangeEventView} from "./components/history/ChangeEventView.js";
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { withRouter } from 'react-router-dom'
 
 const App = () => (
    <Router>
@@ -60,9 +61,9 @@ const TrackingSummaryDTO = ({ match }) => (
    <TrackingSummary trackingID={match.params.trackingID} />
 );
 
-const TrackingContentEntryDTO = ({ match }) => (
-    <TrackingContentEntry trackingID={match.params.trackingID} type={match.params.type} location={location}/>
-);
+const TrackingContentEntryDTO = withRouter(({ match, history }) => (
+    <TrackingContentEntry trackingID={match.params.trackingID} type={match.params.type} location={location} history={history}/>
+));
 
 const ChgSumStats = ({ match }) => (
   <ChangeSummaryStats />
